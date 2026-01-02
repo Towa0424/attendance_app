@@ -1,0 +1,100 @@
+<div class="page">
+  <div class="pageHead">
+    <h1 class="pageHead__title">打刻</h1>
+    <div class="pageHead__actions">
+      <% if current_user.admin? %>
+        <%= link_to "管理画面", admin_users_path, class: "btn btn--ghost" %>
+      <% end %>
+      <%= button_to "ログアウト", destroy_user_session_path, method: :delete, class: "btn btn--ghost" %>
+    </div>
+  </div>
+
+  <% if alert.present? %>
+    <div class="alert alert--error"><%= alert %></div>
+  <% end %>
+
+  <section class="card">
+    <div class="card__body">
+      <div class="punchHead">
+        <div>
+          <div class="punchHead__who"><%= current_user.name %></div>
+          <div class="punchHead__date muted"><%= @today.strftime("%Y/%m/%d") %></div>
+        </div>
+
+        <div class="clock">
+          <div class="clock__time" id="js-clock"><%= Time.current.strftime("%H:%M:%S") %></div>
+          <div class="clock__sub muted">現在時刻</div>
+        </div>
+      </div>
+
+      <div class="punchGrid">
+        <%= button_to "出勤",
+                      time_records_path(event_type: :clock_in),
+                      method: :post,
+                      class: "btn btn--primary punchBtn",
+                      disabled: @recorded_types.include?("clock_in") %>
+
+        <%= button_to "退勤",
+                      time_records_path(event_type: :clock_out),
+                      method: :post,
+                      class: "btn btn--primary punchBtn",
+                      disabled: @recorded_types.include?("clock_out") %>
+
+        <%= button_to "休始",
+                      time_records_path(event_type: :break_start),
+                      method: :post,
+                      class: "btn btn--ghost punchBtn",
+                      disabled: @recorded_types.include?("break_start") %>
+
+        <%= button_to "休終",
+                      time_records_path(event_type: :break_end),
+                      method: :post,
+                      class: "btn btn--ghost punchBtn",
+                      disabled: @recorded_types.include?("break_end") %>
+      </div>
+
+      <p class="hint">※同じ種別は当日1回まで（ボタンは打刻後に無効化されます）</p>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="card__body card__body--flush">
+      <table class="table">
+        <thead>
+          <tr>
+            <th class="col-type">種別</th>
+            <th class="col-time">打刻時刻</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @today_records.each do |r| %>
+            <tr>
+              <td class="col-type">
+                <span class="tag"><%= event_type_label(r.event_type) %></span>
+              </td>
+              <td class="col-time">
+                <%= r.recorded_at.in_time_zone.strftime("%H:%M") %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</div>
+
+<script>
+  (() => {
+    const el = document.getElementById("js-clock");
+    if (!el) return;
+
+    const pad = (n) => String(n).padStart(2, "0");
+    const tick = () => {
+      const d = new Date();
+      el.textContent = `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+    };
+
+    tick();
+    setInterval(tick, 1000);
+  })();
+</script>

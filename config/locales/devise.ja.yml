@@ -1,0 +1,14 @@
+ja:
+  devise:
+    sessions:
+      signed_in: "ログインしました。"
+      signed_out: "ログアウトしました。"
+      already_signed_out: "既にログアウトしています。"
+
+      user_signed_out: "ログアウトしました。"
+      user:
+        signed_out: "ログアウトしました。"
+
+    failure:
+      invalid: "メールアドレスまたはパスワードが正しくありません。"
+      unauthenticated: "ログインしてください。"

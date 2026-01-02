@@ -1,0 +1,17 @@
+ja:
+  enums:
+    user:
+      role:
+        staff: 一般
+        admin: 管理者
+      employment_type:
+        full_time: 正社員
+        part_time: アルバイト
+        dispatch: 派遣社員
+      position:
+        administrator: 管理者
+        sv: SV
+        communicator: コミュニケーター
+      salary_type:
+        hourly: 時給
+        monthly: 月給

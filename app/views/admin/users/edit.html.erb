@@ -1,0 +1,13 @@
+<div class="page">
+  <div class="pageHead">
+    <h1 class="pageHead__title">スタッフ編集</h1>
+    <div class="pageHead__actions">
+      <%= link_to "一覧へ", admin_users_path, class: "btn btn--ghost btn--sm" %>
+    </div>
+  </div>
+
+  <% if notice.present? %><div class="alert alert--success"><%= notice %></div><% end %>
+  <% if alert.present? %><div class="alert alert--error"><%= alert %></div><% end %>
+
+  <%= render "form", user: @user %>
+</div>

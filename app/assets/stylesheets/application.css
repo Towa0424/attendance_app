@@ -1,0 +1,309 @@
+/* ========== Base ========== */
+:root{
+  --bg: #0b1020;
+  --panel: #0f172a;
+  --card: #0b1224;
+  --line: rgba(255,255,255,.10);
+  --muted: rgba(255,255,255,.70);
+  --text: rgba(255,255,255,.92);
+
+  --primary: #3b82f6;
+  --danger: #ef4444;
+  --success: #22c55e;
+
+  --shadow: 0 18px 55px rgba(0,0,0,.35);
+  --radius-lg: 18px;
+  --radius-md: 14px;
+  --control-h: 40px; /* 好みで 38〜44px で調整 */
+}
+
+*{ box-sizing:border-box; }
+html,body{ height:100%; }
+body{
+  margin:0;
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Meiryo", Arial, sans-serif;
+  background: radial-gradient(1200px 700px at 20% 10%, rgba(59,130,246,.18), transparent 55%),
+              radial-gradient(900px 600px at 90% 20%, rgba(34,197,94,.12), transparent 55%),
+              #070b14;
+  color: var(--text);
+}
+a{ color: inherit; text-decoration: none; }
+a:hover{ text-decoration: underline; }
+.muted{ color: var(--muted); }
+.ta-r{ text-align:right; }
+.ta-c{ text-align:center; }
+
+/* ========== Auth (Devise sessions) ========== */
+.auth{
+  min-height:100vh;
+  display:grid;
+  place-items:center;
+  padding: 28px 16px;
+  position: relative;
+}
+.auth__bg{
+  position:absolute;
+  inset:0;
+  background: linear-gradient(180deg, rgba(15,23,42,.85), rgba(2,6,23,.92));
+  z-index:-1;
+}
+.auth__wrap{
+  width: min(520px, 100%);
+}
+.authCard{
+  background: rgba(15,23,42,.78);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+  overflow:hidden;
+}
+.authCard__head{
+  padding: 18px 18px 0;
+}
+.authCard__title{
+  margin: 0;
+  font-size: 18px;
+  letter-spacing: .02em;
+}
+.auth__foot{
+  margin: 10px 0 0;
+  text-align:center;
+  color: rgba(255,255,255,.55);
+  font-size: 12px;
+}
+
+/* ========== Form ========== */
+.form{ padding: 16px 18px 18px; display:grid; gap: 12px; }
+.form__row{ display:grid; gap:6px; }
+.label{ font-size: 12px; color: rgba(255,255,255,.78); }
+.hint{ margin: 6px 0 0; font-size: 12px; color: rgba(255,255,255,.60); }
+
+.input, .select, .textarea{
+  width:100%;
+  padding: 11px 12px;
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(255,255,255,.14);
+  background: rgba(2,6,23,.55);
+  color: var(--text);
+  outline: none;
+}
+.input::placeholder, .textarea::placeholder{ color: rgba(255,255,255,.42); }
+.input:focus, .select:focus, .textarea:focus{
+  border-color: rgba(59,130,246,.65);
+  box-shadow: 0 0 0 4px rgba(59,130,246,.18);
+}
+.input[type="date"]::-webkit-calendar-picker-indicator{
+  filter: invert(1);   /* 黒→白に反転 */
+  opacity: .85;
+  cursor: pointer;
+}
+.input[type="date"]::-webkit-calendar-picker-indicator:hover{
+  opacity: 1;
+}
+
+
+.grid2{
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+@media (max-width: 720px){
+  .grid2{ grid-template-columns: 1fr; }
+}
+
+/* checkbox */
+.check{
+  display:flex;
+  align-items:center;
+  gap: 8px;
+  font-size: 13px;
+  color: rgba(255,255,255,.80);
+}
+.check input{ transform: translateY(-1px); }
+
+/* ========== Buttons ========== */
+.btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap: 8px;
+  padding: 11px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.14);
+  background: rgba(255,255,255,.06);
+  color: var(--text);
+  cursor:pointer;
+  font-weight: 600;
+  letter-spacing: .01em;
+  transition: transform .06s ease, background .12s ease, border-color .12s ease;
+}
+.btn:hover{ background: rgba(255,255,255,.10); }
+.btn:active{ transform: translateY(1px); }
+.btn--primary{
+  background: rgba(59,130,246,.90);
+  border-color: rgba(59,130,246,.95);
+}
+.btn--primary:hover{ background: rgba(59,130,246,1); }
+.btn--ghost{
+  background: transparent;
+  border-color: rgba(255,255,255,.14);
+}
+.btn--danger{
+  background: rgba(239,68,68,.92);
+  border-color: rgba(239,68,68,.95);
+}
+.btn--sm{
+  padding: 7px 10px;
+  font-size: 12px;
+}
+.btn--compact{
+  height: var(--control-h);
+  padding: 0 14px;   /* 横だけ */
+  font-size: 13px;
+}
+
+/* ========== Alerts ========== */
+.alert{
+  margin: 0 18px 12px;
+  padding: 10px 12px;
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(255,255,255,.14);
+  background: rgba(255,255,255,.06);
+  font-size: 13px;
+}
+.alert--error{
+  border-color: rgba(239,68,68,.45);
+  background: rgba(239,68,68,.12);
+}
+.alert--success{
+  border-color: rgba(34,197,94,.40);
+  background: rgba(34,197,94,.10);
+}
+
+/* ========== Admin / Page layout ========== */
+.page{
+  max-width: 1100px;
+  margin: 28px auto;
+  padding: 0 16px;
+}
+.pageHead{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+.pageHead__title{
+  margin: 0;
+  font-size: 20px;
+}
+.pageHead__actions{ display:flex; gap: 10px; flex-wrap: wrap; }
+
+.card{
+  margin-top: 20px;
+  background: rgba(15,23,42,.72);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 14px 45px rgba(0,0,0,.25);
+  overflow:hidden;
+}
+.card__body{ padding: 16px; }
+.card__body--flush{ padding: 0; }
+
+.table{
+  width: 100%;
+  border-collapse: collapse;
+}
+.table th, .table td{
+  padding: 12px 14px;
+  border-top: 1px solid rgba(255,255,255,.08);
+  vertical-align: top;
+}
+.table thead th{
+  border-top: none;
+  background: rgba(255,255,255,.05);
+  font-weight: 700;
+  color: rgba(255,255,255,.80);
+}
+
+/* small tag */
+.tag{
+  display:inline-block;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.14);
+  background: rgba(255,255,255,.06);
+  font-size: 12px;
+  color: rgba(255,255,255,.85);
+}
+
+/* ========== Punch (TimeRecords) ========== */
+.punchHead{
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  gap: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(255,255,255,.08);
+  margin-bottom: 12px;
+}
+
+.punchHead__who{
+  font-size: 16px;
+  font-weight: 700;
+}
+.punchHead__date{
+  font-size: 12px;
+}
+
+.clock{ text-align:right; }
+.clock__time{
+  font-size: 40px;
+  letter-spacing: .06em;
+  font-weight: 800;
+}
+.clock__sub{ font-size: 12px; }
+
+.punchGrid{
+  display:grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 12px;
+}
+.punchBtn{
+  width:100%;
+  padding: 14px 12px;
+}
+
+button[disabled]{
+  opacity: .45;
+  cursor: not-allowed;
+  transform: none;
+}
+/* ========== Admin filters ========== */
+.filter{
+  display:flex;
+  align-items:center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.filter__label{
+  font-size: 12px;
+  color: rgba(255,255,255,.78);
+}
+
+/* 既存 .select を少しコンパクトにしたい場合 */
+.select--sm{
+  padding: 9px 12px;
+  border-radius: 12px;
+  min-width: 220px;
+}
+
+/* a:hover の underline がボタンに乗らないように */
+.btn:hover{
+  text-decoration: none;
+}
+.pageHead__actions .btn--compact{
+  align-self: flex-end;
+}

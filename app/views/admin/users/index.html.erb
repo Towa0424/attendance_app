@@ -1,0 +1,66 @@
+<div class="page">
+  <div class="pageHead">
+    <h1 class="pageHead__title">スタッフ管理</h1>
+
+    <div class="pageHead__actions">
+      <!-- グループ絞り込み -->
+      <%= form_with url: admin_users_path, method: :get, local: true, class: "filter" do %>
+        <label class="filter__label" for="group_id">グループ</label>
+
+        <%= select_tag :group_id,
+              options_for_select(
+                [["すべて", ""]] + @groups.map { |g| [g.name, g.id] },
+                params[:group_id]
+              ),
+              class: "select select--sm",
+              id: "group_id",
+              onchange: "this.form.submit();" %>
+
+        <% if params[:group_id].present? %>
+          <%= link_to "クリア", admin_users_path, class: "btn btn--ghost btn--sm" %>
+        <% end %>
+      <% end %>
+
+      <%= link_to "新規作成", new_admin_user_path, class: "btn btn--primary btn--compact" %>
+    </div>
+  </div>
+
+  <% if alert.present? %><div class="alert alert--error"><%= alert %></div><% end %>
+
+  <section class="card">
+    <div class="card__body card__body--flush">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>氏名</th>
+            <th>社員番号</th>
+            <th>権限</th>
+            <th>グループ</th>
+            <th>メール</th>
+            <th class="ta-r">操作</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <% @users.each do |u| %>
+            <tr>
+              <td><%= u.name %></td>
+              <td><%= u.employee_number %></td>
+              <td><%= I18n.t("enums.user.role.#{u.role}") %></td>
+              <td><%= u.group&.name || "-" %></td>
+              <td class="muted"><%= u.email %></td>
+
+              <td class="ta-r">
+                <%= link_to "編集", edit_admin_user_path(u), class: "btn btn--ghost btn--sm" %>
+              </td>
+            </tr>
+          <% end %>
+
+          <% if @users.empty? %>
+            <tr><td colspan="6" class="muted ta-c">スタッフがいません。</td></tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</div>
