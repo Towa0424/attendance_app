@@ -16,16 +16,11 @@
               id: "group_id",
               onchange: "this.form.submit();" %>
 
-        <% if params[:group_id].present? %>
-          <%= link_to "クリア", admin_users_path, class: "btn btn--ghost btn--sm" %>
-        <% end %>
       <% end %>
 
       <%= link_to "新規作成", new_admin_user_path, class: "btn btn--primary btn--compact" %>
     </div>
   </div>
-
-  <% if alert.present? %><div class="alert alert--error"><%= alert %></div><% end %>
 
   <section class="card">
     <div class="card__body card__body--flush">

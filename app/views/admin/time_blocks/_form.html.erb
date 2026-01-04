@@ -1,0 +1,79 @@
+<% palette = %w[
+  #FFFFFF #000000 #EEECE1 #1F497D #4F81BD #C0504D #9BBB59 #8064A2 #4BACC6 #F79646
+  #F2F2F2 #7F7F7F #DDD9C3 #C6D9F1 #DBE5F1 #F2DCDB #EBF1DD #E5E0EC #DBEEF3 #FDEADA
+  #D8D8D8 #595959 #C4BD97 #8DB4E2 #B8CCE4 #E5B9B7 #D7E3BC #CCC1D9 #B7DDE8 #FBD5B5
+  #BFBFBF #3F3F3F #938953 #548DD4 #95B3D7 #D99694 #C3D69B #B2A2C7 #92CDDC #FAC08F
+  #A5A5A5 #262626 #494429 #17365D #366092 #953734 #76923C #5F497A #31859B #E36C09
+] %>
+
+<section class="card">
+  <div class="card__body">
+    <% if time_block.errors.any? %>
+      <div class="alert alert--error">
+        <div style="font-weight:700; margin-bottom:6px;">入力内容を確認してください</div>
+        <ul style="margin:0; padding-left: 18px;">
+          <% time_block.errors.full_messages.each do |msg| %>
+            <li><%= msg %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <%= form_with model: [:admin, time_block], local: true, class: "form" do |f| %>
+      <div class="form__row">
+        <%= f.label :name, "ブロック名", class: "label" %>
+        <%= f.text_field :name, class: "input", placeholder: "例：通常勤務 / 休憩 / 研修 など" %>
+      </div>
+
+      <div class="form__row">
+        <%= f.label :color_code, "色", class: "label" %>
+
+        <!-- 実際に保存する値 -->
+        <%= f.hidden_field :color_code, class: "js-colorValue" %>
+
+        <!-- プレビュー -->
+        <div class="colorPick__head">
+          <span class="colorChip colorChip--lg js-colorChip" style="--c:<%= time_block.color_code.presence || '#3b82f6' %>"></span>
+          <span class="muted js-colorText"><%= time_block.color_code.presence || '#3b82f6' %></span>
+        </div>
+
+        <!-- Excelっぽいパレット -->
+        <div class="colorPick" data-color-pick>
+          <% palette.each do |hex| %>
+            <button
+              type="button"
+              class="swatch js-swatch"
+              style="--c:<%= hex %>"
+              data-color="<%= hex %>"
+              aria-label="<%= hex %>">
+            </button>
+          <% end %>
+
+          <!-- 任意色を許すなら残す（Excelの「その他の色」相当） -->
+          <div class="colorPick__custom">
+            <label class="label" style="margin:0;">その他</label>
+            <input type="color" class="colorPicker js-colorPicker" value="<%= time_block.color_code.presence || '#3b82f6' %>">
+          </div>
+        </div>
+
+        <p class="hint">ガントの色塗りに使用します。パレットから選択してください。</p>
+      </div>
+
+      <div class="form__row">
+        <label class="check">
+          <%= f.check_box :has_cost %>
+          コスト対象
+        </label>
+      </div>
+
+      <div class="form__row">
+        <label class="check">
+          <%= f.check_box :has_sales %>
+          売上対象
+        </label>
+      </div>
+
+      <%= f.submit(time_block.persisted? ? "更新する" : "作成する", class: "btn btn--primary") %>
+    <% end %>
+  </div>
+</section>

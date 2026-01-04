@@ -1,0 +1,56 @@
+<div class="page">
+  <div class="pageHead">
+    <h1 class="pageHead__title">グループ管理</h1>
+
+    <div class="pageHead__actions">
+      <%= link_to "新規作成", new_admin_group_path, class: "btn btn--primary btn--compact" %>
+    </div>
+  </div>
+
+  <section class="card">
+    <div class="card__body card__body--flush">
+      <table class="table">
+        <!-- 列の伸びを抑えてスタッフ管理っぽい密度にする -->
+        <colgroup>
+          <col style="width: 42%;">
+          <col style="width: 26%;">
+          <col style="width: 16%;">
+          <col style="width: 16%;">
+        </colgroup>
+
+        <thead>
+          <tr>
+            <th>グループ名</th>
+            <th>稼働時間</th>
+            <th class="ta-r">所属人数</th>
+            <th class="ta-r">操作</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <% @groups.each do |g| %>
+            <tr>
+              <td><%= g.name %></td>
+
+              <td>
+                <span class="tag">
+                  <%= slot_to_time(g.work_start_slot) %>〜<%= slot_to_time(g.work_end_slot) %>
+                </span>
+              </td>
+
+              <td class="ta-r"><%= g.users.size %></td>
+
+              <td class="ta-r">
+                <%= link_to "編集", edit_admin_group_path(g), class: "btn btn--ghost btn--sm" %>
+              </td>
+            </tr>
+          <% end %>
+
+          <% if @groups.empty? %>
+            <tr><td colspan="4" class="muted ta-c">グループがありません。</td></tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</div>

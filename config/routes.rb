@@ -8,6 +8,8 @@ Rails.application.routes.draw do
   resources :time_records, only: [:index, :create]
 
   namespace :admin do
-    resources :users, only: [:index, :new, :create, :edit, :update]
+    resources :users, only: %i[index new create edit update]
+    resources :groups, only: %i[index new create edit update]
+    resources :time_blocks, only: %i[index new create edit update]
   end
 end

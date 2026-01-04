@@ -1,0 +1,10 @@
+<div class="page">
+  <div class="pageHead">
+    <h1 class="pageHead__title">時間ブロック編集</h1>
+    <div class="pageHead__actions">
+      <%= link_to "一覧へ", admin_time_blocks_path, class: "btn btn--ghost btn--sm" %>
+    </div>
+  </div>
+
+  <%= render "form", time_block: @time_block %>
+</div>

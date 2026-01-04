@@ -1,0 +1,39 @@
+<% slot_options = (0..95).map do |i|
+     h = i / 4
+     m = (i % 4) * 15
+     ["#{format('%02d', h)}:#{format('%02d', m)}", i]
+   end %>
+
+<section class="card">
+  <div class="card__body">
+    <% if group.errors.any? %>
+      <div class="alert alert--error">
+        <div style="font-weight:700; margin-bottom:6px;">入力内容を確認してください</div>
+        <ul style="margin:0; padding-left: 18px;">
+          <% group.errors.full_messages.each do |msg| %>
+            <li><%= msg %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <%= form_with model: [:admin, group], local: true, class: "form" do |f| %>
+      <div class="form__row">
+        <%= f.label :name, "グループ名", class: "label" %>
+        <%= f.text_field :name, class: "input", placeholder: "例：1Grp" %>
+      </div>
+
+      <div class="form__row">
+        <%= f.label :work_start_slot, "稼働開始", class: "label" %>
+        <%= f.select :work_start_slot, slot_options, {}, class: "select" %>
+      </div>
+
+      <div class="form__row">
+        <%= f.label :work_end_slot, "稼働終了", class: "label" %>
+        <%= f.select :work_end_slot, slot_options, {}, class: "select" %>
+      </div>
+
+      <%= f.submit(group.persisted? ? "更新する" : "作成する", class: "btn btn--primary") %>
+    <% end %>
+  </div>
+</section>

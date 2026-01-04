@@ -1,0 +1,29 @@
+<header class="adminHeader">
+  <div class="adminHeader__inner">
+    <div class="adminHeader__brand">
+      <span class="adminHeader__title">管理画面</span>
+      <span class="adminHeader__sub">管理メニュー</span>
+    </div>
+
+    <nav class="adminNav" aria-label="管理者メニュー">
+
+      <%= link_to "スタッフ管理", admin_users_path,
+            class: "adminNav__link #{'is-active' if current_page?(admin_users_path)}" %>
+
+      <%= link_to "グループ管理", admin_groups_path,
+            class: "adminNav__link #{'is-active' if current_page?(admin_groups_path)}" %>
+
+      <%= link_to "時間ブロック管理", admin_time_blocks_path,
+      class: "adminNav__link #{'is-active' if current_page?(admin_time_blocks_path)}" %>
+
+      <%# 必要に応じて追加 %>
+      <%#= link_to "勤怠", admin_time_records_path, class: "adminNav__link" %>
+      <%#= link_to "シフト", admin_shifts_path, class: "adminNav__link" %>
+    </nav>
+
+    <div class="adminHeader__right">
+      <span class="tag"><%= link_to current_user&.name, root_path %></span>
+      <%= link_to "ログアウト", destroy_user_session_path, data: { turbo_method: :delete }, class: "btn btn--ghost btn--sm" %>
+    </div>
+  </div>
+</header>

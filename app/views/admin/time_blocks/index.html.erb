@@ -1,0 +1,61 @@
+<div class="page">
+  <div class="pageHead">
+    <h1 class="pageHead__title">時間ブロック管理</h1>
+    <div class="pageHead__actions">
+      <%= link_to "新規作成", new_admin_time_block_path, class: "btn btn--primary btn--compact" %>
+    </div>
+  </div>
+
+  <section class="card">
+    <div class="card__body card__body--flush">
+      <table class="table">
+        <colgroup>
+          <col style="width: 40%;">
+          <col style="width: 22%;">
+          <col style="width: 18%;">
+          <col style="width: 20%;">
+        </colgroup>
+
+        <thead>
+          <tr>
+            <th>ブロック名</th>
+            <th>カラー</th>
+            <th>コスト&売り上げ</th>
+            <th class="ta-r">操作</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <% @time_blocks.each do |tb| %>
+            <tr>
+              <td><%= tb.name %></td>
+
+              <td>
+                <span class="colorChip" style="--c:<%= tb.color_code %>"></span>
+                <span class="muted"><%= tb.color_code %></span>
+              </td>
+
+              <td>
+                <% if tb.has_cost %>
+                  <span class="tag">コスト</span>
+                <% end %>
+
+                <% if tb.has_sales %>
+                  <span class="tag">売り上げ</span>
+                <% end %>
+              </td>
+
+              <td class="ta-r">
+                <%= link_to "編集", edit_admin_time_block_path(tb), class: "btn btn--ghost btn--sm" %>
+              </td>
+            </tr>
+          <% end %>
+
+          <% if @time_blocks.empty? %>
+            <tr><td colspan="4" class="muted ta-c">時間ブロックがありません。</td></tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</div>
