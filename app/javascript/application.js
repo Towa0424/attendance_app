@@ -2,3 +2,4 @@
 import "@hotwired/turbo-rails"
 import "controllers"
 import "./admin/color_pick"
+import "./admin/shift_pattern_editor"

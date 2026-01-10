@@ -1,0 +1,133 @@
+<div class="page">
+  <div class="pageHead">
+    <h1 class="pageHead__title">シフトパターン管理</h1>
+
+    <div class="pageHead__actions">
+      <%= link_to "新規作成", new_admin_shift_pattern_path, class: "btn btn--primary btn--compact" %>
+    </div>
+  </div>
+
+  <section class="card">
+    <div class="card__body">
+      <div class="filter">
+        <div class="filter__label">表示グループ</div>
+
+        <%= form_with url: admin_shift_patterns_path, method: :get, local: true do %>
+          <%= select_tag :group_id,
+                options_from_collection_for_select(@groups, :id, :name, @group_id),
+                include_blank: "全て",
+                class: "select select--sm",
+                onchange: "this.form.submit();" %>
+        <% end %>
+      </div>
+
+      <% if @header_range_start && @header_range_end %>
+        <p class="hint">
+          表示時間：<%= ShiftPattern.slot_to_hhmm(@header_range_start) %> 〜 <%= ShiftPattern.slot_to_hhmm(@header_range_end) %>
+        </p>
+      <% else %>
+        <p class="hint">表示時間：各パターンの所属グループ営業時間に準拠</p>
+      <% end %>
+    </div>
+
+    <div class="card__body card__body--flush">
+      <table class="table">
+        <colgroup>
+          <col style="width: 360px;">
+          <col>
+          <col style="width: 140px;">
+        </colgroup>
+
+        <thead>
+          <tr>
+            <th>シフトパターン</th>
+            <th>ガント</th>
+            <th class="ta-r">操作</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <% @shift_patterns.each do |sp| %>
+            <% range_start = sp.group.work_start_slot %>
+            <% range_end   = sp.group.work_end_slot %>
+
+            <% slots  = sp.slots_array %>
+            <% blocks = ShiftPattern.blocks_from_slots(slots, range_start: range_start, range_end: range_end) %>
+            <% usage  = sp.time_block_usage %>
+            <% end_on_hour = (range_end % 4 == 0) %>
+
+            <tr>
+              <td>
+                <div style="display:grid; gap:8px;">
+                  <div style="font-weight:900; font-size: 15px;"><%= sp.name %></div>
+
+                  <div class="spMeta">
+                    <span class="tag">
+                      所属グループ名：<%= sp.group.name %>：<%= ShiftPattern.slot_to_hhmm(range_start) %>〜<%= ShiftPattern.slot_to_hhmm(range_end) %>
+                    </span>
+                  </div>
+
+                  <div class="spMeta">
+                    <div class="spMeta__label">使用ブロック</div>
+
+                    <% if usage.present? %>
+                      <div class="spPills">
+                        <% usage.each do |u| %>
+                          <% tb = u[:time_block] %>
+                          <span class="spPill" title="<%= tb.name %>（合計 <%= ShiftPattern.minutes_to_hhmm(u[:minutes]) %>）">
+                            <span class="spPill__dot" style="--c:<%= tb.color_code %>"></span>
+                            <span class="spPill__name"><%= tb.name %></span>
+                            <span class="spPill__time"><%= ShiftPattern.minutes_to_hhmm(u[:minutes]) %></span>
+                          </span>
+                        <% end %>
+                      </div>
+                    <% else %>
+                      <div class="muted" style="font-size:12px;">（未設定）</div>
+                    <% end %>
+                  </div>
+                </div>
+              </td>
+
+              <td>
+                <div class="spMiniScroll">
+                  <div class="spMini" style="--slots:<%= (range_end - range_start) %>;">
+                    <div class="spMini__hours">
+                      <% ((range_start / 4)...(range_end / 4)).each do |h| %>
+                        <div class="spMini__label" style="--x:<%= (h * 4 - range_start) %>;">
+                          <%= format("%02d:00", h) %>
+                        </div>
+                      <% end %>
+
+                      <% unless end_on_hour %>
+                        <div class="spMini__end"><%= ShiftPattern.slot_to_hhmm(range_end) %></div>
+                      <% end %>
+                    </div>
+
+                    <div class="spMini__lane">
+                      <% blocks.each do |b| %>
+                        <% tb = @time_block_map[b[:time_block_id]] %>
+                        <% next if tb.nil? %>
+
+                        <div class="spBlock"
+                             style="--start:<%= (b[:start] - range_start) %>; --end:<%= (b[:end] - range_start) %>; --c:<%= tb.color_code %>;"
+                             title="<%= tb.name %>"></div>
+                      <% end %>
+                    </div>
+                  </div>
+                </div>
+              </td>
+
+              <td class="ta-r">
+                <%= link_to "編集", edit_admin_shift_pattern_path(sp), class: "btn btn--ghost btn--sm" %>
+              </td>
+            </tr>
+          <% end %>
+
+          <% if @shift_patterns.empty? %>
+            <tr><td colspan="3" class="muted ta-c">シフトパターンがありません。</td></tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</div>

@@ -3,26 +3,35 @@
     <h1 class="pageHead__title">スタッフ管理</h1>
 
     <div class="pageHead__actions">
-      <!-- グループ絞り込み -->
-      <%= form_with url: admin_users_path, method: :get, local: true, class: "filter" do %>
-        <label class="filter__label" for="group_id">グループ</label>
-
-        <%= select_tag :group_id,
-              options_for_select(
-                [["すべて", ""]] + @groups.map { |g| [g.name, g.id] },
-                params[:group_id]
-              ),
-              class: "select select--sm",
-              id: "group_id",
-              onchange: "this.form.submit();" %>
-
-      <% end %>
-
       <%= link_to "新規作成", new_admin_user_path, class: "btn btn--primary btn--compact" %>
     </div>
   </div>
 
   <section class="card">
+    <!-- シフトパターン管理と同じ「カード上部フィルタ」 -->
+    <div class="card__body">
+      <div class="filter">
+        <div class="filter__label">表示グループ</div>
+
+        <%= form_with url: admin_users_path, method: :get, local: true do %>
+          <%= select_tag :group_id,
+                options_for_select(
+                  [["全て", ""]] + @groups.map { |g| [g.name, g.id] },
+                  params[:group_id]
+                ),
+                class: "select select--sm",
+                onchange: "this.form.submit();" %>
+        <% end %>
+      </div>
+
+      <% if params[:group_id].present? %>
+        <% selected = @groups.find { |g| g.id == params[:group_id].to_i } %>
+        <p class="hint">
+          表示中：<%= selected ? selected.name : "（不明なグループ）" %>
+        </p>
+      <% end %>
+    </div>
+
     <div class="card__body card__body--flush">
       <table class="table">
         <thead>

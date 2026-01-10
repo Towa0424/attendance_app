@@ -1,0 +1,15 @@
+<div class="page">
+  <div class="pageHead">
+    <h1 class="pageHead__title">シフトパターン新規作成</h1>
+    <div class="pageHead__actions">
+      <%= link_to "戻る", admin_shift_patterns_path, class: "btn btn--ghost btn--compact" %>
+    </div>
+  </div>
+
+  <%= render "form",
+        shift_pattern: @shift_pattern,
+        slots: @slots,
+        groups: @groups,
+        time_blocks: @time_blocks,
+        group_ranges: @group_ranges %>
+</div>

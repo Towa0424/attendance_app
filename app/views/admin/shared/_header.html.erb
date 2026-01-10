@@ -16,13 +16,13 @@
       <%= link_to "時間ブロック管理", admin_time_blocks_path,
       class: "adminNav__link #{'is-active' if current_page?(admin_time_blocks_path)}" %>
 
-      <%# 必要に応じて追加 %>
-      <%#= link_to "勤怠", admin_time_records_path, class: "adminNav__link" %>
-      <%#= link_to "シフト", admin_shifts_path, class: "adminNav__link" %>
+      <%= link_to "シフトパターン管理", admin_shift_patterns_path,
+            class: "adminNav__link #{'is-active' if current_page?(admin_shift_patterns_path)}" %>
+            
     </nav>
 
     <div class="adminHeader__right">
-      <span class="tag"><%= link_to current_user&.name, root_path %></span>
+      <%= link_to current_user&.name, time_records_path, class: "btn btn--ghost btn--sm" %>
       <%= link_to "ログアウト", destroy_user_session_path, data: { turbo_method: :delete }, class: "btn btn--ghost btn--sm" %>
     </div>
   </div>

@@ -49,9 +49,8 @@
             </button>
           <% end %>
 
-          <!-- 任意色を許すなら残す（Excelの「その他の色」相当） -->
           <div class="colorPick__custom">
-            <label class="label" style="margin:0;">その他</label>
+            <label class="label" style="margin:0;">パレットで色を調整</label>
             <input type="color" class="colorPicker js-colorPicker" value="<%= time_block.color_code.presence || '#3b82f6' %>">
           </div>
         </div>

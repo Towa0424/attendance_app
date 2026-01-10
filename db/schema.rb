@@ -10,13 +10,33 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2026_01_04_121737) do
+ActiveRecord::Schema[7.1].define(version: 2026_01_10_140511) do
   create_table "groups", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "name", null: false
     t.integer "work_start_slot", null: false
     t.integer "work_end_slot", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "shift_pattern_details", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.bigint "shift_pattern_id", null: false
+    t.integer "slot_index", null: false
+    t.bigint "time_block_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["shift_pattern_id", "slot_index"], name: "idx_shift_pattern_details_pattern_slot", unique: true
+    t.index ["shift_pattern_id"], name: "index_shift_pattern_details_on_shift_pattern_id"
+    t.index ["time_block_id"], name: "index_shift_pattern_details_on_time_block_id"
+    t.check_constraint "(`slot_index` >= 0) and (`slot_index` <= 95)", name: "chk_shift_pattern_details_slot_range"
+  end
+
+  create_table "shift_patterns", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.string "name", null: false
+    t.bigint "group_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["group_id"], name: "index_shift_patterns_on_group_id"
   end
 
   create_table "time_blocks", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
@@ -64,6 +84,9 @@ ActiveRecord::Schema[7.1].define(version: 2026_01_04_121737) do
     t.index ["role"], name: "index_users_on_role"
   end
 
+  add_foreign_key "shift_pattern_details", "shift_patterns"
+  add_foreign_key "shift_pattern_details", "time_blocks"
+  add_foreign_key "shift_patterns", "groups"
   add_foreign_key "time_records", "users"
   add_foreign_key "users", "groups"
 end

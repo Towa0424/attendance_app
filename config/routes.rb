@@ -11,5 +11,6 @@ Rails.application.routes.draw do
     resources :users, only: %i[index new create edit update]
     resources :groups, only: %i[index new create edit update]
     resources :time_blocks, only: %i[index new create edit update]
+    resources :shift_patterns, only: %i[index new create edit update]
   end
 end

@@ -1,0 +1,11 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  shift_pattern: one
+  slot_index: 1
+  time_block: one
+
+two:
+  shift_pattern: two
+  slot_index: 1
+  time_block: two

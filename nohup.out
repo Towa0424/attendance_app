@@ -4,3 +4,9 @@
 2026-01-03T13:14:09.331350Z mysqld_safe Directory '/var/run/mysqld' for UNIX socket file don't exists.
 2026-01-03T13:14:09.478255Z mysqld_safe Logging to '/home/w8d42/mysql_error.log'.
 2026-01-03T13:14:09.492714Z mysqld_safe Starting mysqld daemon with databases from /home/linuxbrew/.linuxbrew/var/mysql
+2026-01-10T13:56:29.928199Z mysqld_safe Logging to '/home/w8d42/mysql_error.log'.
+2026-01-10T13:56:29.929443Z mysqld_safe Logging to '/home/w8d42/mysql_error.log'.
+2026-01-10T13:56:29.931954Z mysqld_safe Directory '/var/run/mysqld' for UNIX socket file don't exists.
+2026-01-10T13:56:29.932178Z mysqld_safe Directory '/var/run/mysqld' for UNIX socket file don't exists.
+2026-01-10T13:56:30.100386Z mysqld_safe Logging to '/home/w8d42/mysql_error.log'.
+2026-01-10T13:56:30.117312Z mysqld_safe Starting mysqld daemon with databases from /home/linuxbrew/.linuxbrew/var/mysql
