@@ -23,13 +23,6 @@
                 onchange: "this.form.submit();" %>
         <% end %>
       </div>
-
-      <% if params[:group_id].present? %>
-        <% selected = @groups.find { |g| g.id == params[:group_id].to_i } %>
-        <p class="hint">
-          表示中：<%= selected ? selected.name : "（不明なグループ）" %>
-        </p>
-      <% end %>
     </div>
 
     <div class="card__body card__body--flush">

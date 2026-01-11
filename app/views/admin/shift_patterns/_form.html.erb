@@ -1,24 +1,20 @@
 <section class="card">
   <div class="card__body">
-    <% if time_blocks.empty? %>
-      <div class="alert alert--error">
-        先に「時間ブロック管理」で時間ブロックを作成してください。
-      </div>
-    <% end %>
-
-    <% if shift_pattern.errors.any? %>
+    <% if @shift_pattern.errors.any? %>
       <div class="alert alert--error">
         <div style="font-weight:700; margin-bottom:6px;">入力内容を確認してください</div>
         <ul style="margin:0; padding-left: 18px;">
-          <% shift_pattern.errors.full_messages.each do |msg| %>
+          <% @shift_pattern.errors.full_messages.each do |msg| %>
             <li><%= msg %></li>
           <% end %>
         </ul>
       </div>
     <% end %>
 
-    <%= form_with model: [:admin, shift_pattern], local: true, class: "form" do |f| %>
-      <div class="grid2">
+    <%= form_with model: [:admin, @shift_pattern], local: true, class: "form spForm" do |f| %>
+
+      <!-- 上段：2カラム（パターン名 / 所属グループ） -->
+      <div class="spTopGrid">
         <div class="form__row">
           <%= f.label :name, "シフトパターン名", class: "label" %>
           <%= f.text_field :name, class: "input", placeholder: "例：早番（平日）" %>
@@ -26,59 +22,75 @@
 
         <div class="form__row">
           <%= f.label :group_id, "所属グループ", class: "label" %>
-          <%= f.collection_select :group_id, groups, :id, :name,
-                { include_blank: "選択してください" },
+
+          <%= f.select :group_id,
+                options_for_select(
+                  [["未設定", ""]] +
+                  @groups.map { |g|
+                    [
+                      g.name,
+                      g.id,
+                      { "data-start-slot": g.work_start_slot, "data-end-slot": g.work_end_slot }
+                    ]
+                  },
+                  f.object.group_id
+                ),
+                {},
                 { class: "select", id: "spGroupSelect" } %>
+
         </div>
       </div>
 
-      <div class="spLegend">
-        <div class="spLegend__blocks">
-          <% time_blocks.each do |tb| %>
+      <!-- 中段：時間ブロック + ツール -->
+      <div class="spBar">
+        <div class="spLegend" aria-label="時間ブロック選択">
+          <% @time_blocks.each do |tb| %>
             <button type="button"
                     class="spLegend__item"
                     data-time-block-id="<%= tb.id %>"
                     data-time-block-color="<%= tb.color_code %>">
-              <span class="spDot" style="--c:<%= tb.color_code %>"></span>
-              <%= tb.name %>
+              <span class="spLegend__dot" style="--c:<%= tb.color_code %>"></span>
+              <span class="spLegend__name"><%= tb.name %></span>
             </button>
           <% end %>
         </div>
 
-        <div class="spLegend__tools">
-          <button type="button" class="spToolBtn" id="spEraserBtn" aria-label="消しゴム（押している間だけ有効）">
-            <span class="spToolBtn__icon">⌫</span>
+        <div class="spTools">
+          <button type="button" id="spEraserBtn" class="btn btn--ghost btn--sm" aria-pressed="false">
             消しゴム
           </button>
-
-          <button type="button" class="spToolBtn" id="spResetBtn" aria-label="ガントのみリセット">
-            <span class="spToolBtn__icon">↺</span>
+          <button type="button" id="spResetBtn" class="btn btn--ghost btn--sm">
             ガントリセット
           </button>
         </div>
       </div>
 
-      <div class="spWrap"
-           data-sp-editor="1"
-           data-group-ranges="<%= group_ranges.to_json %>"
-           data-initial-slots="<%= slots.to_json %>">
-        <div class="spFrame">
-          <div class="spHours">
-            <div class="spHours__row" id="spHoursRow"></div>
-            <div class="spHours__end" id="spHoursEnd"></div>
-          </div>
+      <!-- 下段：ガント（1段下・全幅） -->
+      <div class="spGanttRow" data-sp-editor="1">
+        <%= hidden_field_tag "shift_pattern[slots_json]",
+              (@initial_slots || Array.new(96)).to_json,
+              id: "spSlotsJson" %>
 
-          <div class="spLane is-disabled" id="spLane" aria-label="シフトパターンの時間帯">
-            <div class="spHover" id="spHover"></div>
+        <div class="timelineWrap">
+          <div class="timeline" aria-label="シフトパターンの時間帯">
+            <div class="spHours">
+              <div id="spHoursRow" class="spHoursRow"></div>
+              <div id="spHoursEnd" class="spHoursEnd"></div>
+            </div>
+
+            <div id="spLane" class="spLane is-disabled">
+              <div id="spHover" class="spHover" aria-hidden="true"></div>
+              <div class="spLane__hint">グループ選択後に編集できます</div>
+            </div>
           </div>
         </div>
       </div>
 
-      <%= hidden_field_tag "shift_pattern[slots_json]", slots.to_json, id: "spSlotsJson" %>
-
-      <div style="display:flex; justify-content:flex-end;">
-        <%= f.submit(shift_pattern.persisted? ? "更新する" : "作成する", class: "btn btn--primary") %>
+      <!-- 送信 -->
+      <div class="spSubmitRow">
+        <%= f.submit(@shift_pattern.persisted? ? "更新する" : "作成する", class: "btn btn--primary btn--compact") %>
       </div>
+
     <% end %>
   </div>
 </section>

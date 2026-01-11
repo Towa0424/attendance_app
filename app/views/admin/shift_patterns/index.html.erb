@@ -58,31 +58,35 @@
 
             <tr>
               <td>
-                <div style="display:grid; gap:8px;">
-                  <div style="font-weight:900; font-size: 15px;"><%= sp.name %></div>
+                <div class="spCell">
+                  <div class="spCell__titleRow">
+                    <div class="spCell__title">
+                      <%= sp.name %>
+                    </div>
 
-                  <div class="spMeta">
                     <span class="tag">
-                      所属グループ名：<%= sp.group.name %>：<%= ShiftPattern.slot_to_hhmm(range_start) %>〜<%= ShiftPattern.slot_to_hhmm(range_end) %>
+                      所属グループ名：<%= sp.group.name %>
                     </span>
                   </div>
 
                   <div class="spMeta">
-                    <div class="spMeta__label">使用ブロック</div>
-
                     <% if usage.present? %>
-                      <div class="spPills">
+                      <div class="spPills" aria-label="使用時間ブロック">
                         <% usage.each do |u| %>
                           <% tb = u[:time_block] %>
-                          <span class="spPill" title="<%= tb.name %>（合計 <%= ShiftPattern.minutes_to_hhmm(u[:minutes]) %>）">
+
+                          <span class="spPill"
+                                title="<%= tb.name %>（合計 <%= ShiftPattern.minutes_to_hhmm(u[:minutes]) %>）">
                             <span class="spPill__dot" style="--c:<%= tb.color_code %>"></span>
                             <span class="spPill__name"><%= tb.name %></span>
+
+                            <!-- 時間は不要なら、この1行ごと削除でOK -->
                             <span class="spPill__time"><%= ShiftPattern.minutes_to_hhmm(u[:minutes]) %></span>
                           </span>
                         <% end %>
                       </div>
                     <% else %>
-                      <div class="muted" style="font-size:12px;">（未設定）</div>
+                      <div class="muted spMeta__empty">（未設定）</div>
                     <% end %>
                   </div>
                 </div>

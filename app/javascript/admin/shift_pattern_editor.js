@@ -3,7 +3,7 @@
     const root = document.querySelector('[data-sp-editor="1"]');
     if (!root) return;
 
-    // Turbo遷移で同一DOMに二重バインドしないようにする
+    // Turbo遷移などで二重バインドしない
     if (root.dataset.spBound === "1") return;
     root.dataset.spBound = "1";
 
@@ -18,39 +18,37 @@
     const eraserBtn = document.getElementById("spEraserBtn");
     const resetBtn = document.getElementById("spResetBtn");
 
-    // 必須要素が無いなら安全に抜ける（JSエラーで止まると is-disabled のままになる）
+    // 必須要素が足りない場合は安全に終了
     if (!lane || !hoursRow || !hoursEnd || !hover || !groupSelect || !slotsJson || !eraserBtn || !resetBtn) return;
 
-    const SLOT_W = 18;
+    // ===== Config =====
+    const SLOT_W = 18; // 15分スロット幅(px)
     root.style.setProperty("--slot-w", `${SLOT_W}px`);
 
-    let groupRanges = {};
-    try {
-      groupRanges = JSON.parse(root.dataset.groupRanges || "{}");
-    } catch (_) {
-      groupRanges = {};
-    }
+    // touch でのドラッグ編集安定（※横スクロールと両立したいならここは状況次第）
+    lane.style.touchAction = "none";
 
+    // ===== Data load（hidden field から読むのが確実）=====
     let slots = [];
     try {
-      slots = JSON.parse(root.dataset.initialSlots || "[]");
+      slots = JSON.parse(slotsJson.value || "[]");
     } catch (_) {
       slots = [];
     }
     if (!Array.isArray(slots) || slots.length !== 96) slots = Array(96).fill(null);
 
-    let displayRange = { start: 36, end: 80 }; // fallback
+    // 表示レンジ（slot index）
+    let displayRange = { start: 36, end: 80 }; // fallback（09:00〜20:00）
     let activeTimeBlockId = null;
 
+    // drag state
     let isDragging = false;
     let dragStartSlot = null;
 
-    // --- Tool state (exclusive) ---
+    // tool state（消しゴムON/OFF）
     let isEraserActive = false;
 
-    // iPad / touch でのスクロール干渉を抑える（ドラッグ編集が安定）
-    lane.style.touchAction = "none";
-
+    // ===== utils =====
     const clamp = (n, min, max) => Math.max(min, Math.min(max, n));
 
     const slotToHHMM = (slot) => {
@@ -62,6 +60,11 @@
 
     const setDisabled = (disabled) => {
       lane.classList.toggle("is-disabled", disabled);
+      if (disabled) {
+        lane.classList.remove("is-hovering");
+        isDragging = false;
+        dragStartSlot = null;
+      }
     };
 
     const setSlotsWidth = () => {
@@ -70,7 +73,7 @@
       lane.style.width = `calc(${len} * ${SLOT_W}px)`;
     };
 
-    // 右端ラベル重なり対策（endが :00 なら endラベルは出さない）
+    // 時間ラベル（endが :00 の時は右端終端ラベルを出さない＝重なり回避）
     const renderHours = () => {
       hoursRow.innerHTML = "";
 
@@ -89,11 +92,9 @@
       if (endOnHour) {
         hoursEnd.textContent = "";
         hoursEnd.style.display = "none";
-        hoursRow.style.paddingRight = "0px";
       } else {
         hoursEnd.textContent = slotToHHMM(displayRange.end);
         hoursEnd.style.display = "block";
-        hoursRow.style.paddingRight = "56px";
       }
     };
 
@@ -148,7 +149,16 @@
       for (let s = from; s <= to; s++) slots[s] = value;
     };
 
-    // ====== Tool selection helpers（時間ブロック/消しゴム排他） ======
+    const showHover = (slot) => {
+      lane.classList.add("is-hovering");
+      hover.style.left = `calc(${slot - displayRange.start} * ${SLOT_W}px)`;
+    };
+
+    const hideHover = () => {
+      lane.classList.remove("is-hovering");
+    };
+
+    // ===== tool selection（時間ブロック/消しゴム排他） =====
     const deactivateAllBlocks = () => {
       document.querySelectorAll(".spLegend__item").forEach((b) => b.classList.remove("is-active"));
     };
@@ -166,41 +176,40 @@
 
     const setActiveTimeBlock = (btn) => {
       setEraserActive(false);
-
       deactivateAllBlocks();
       btn.classList.add("is-active");
       activeTimeBlockId = Number(btn.dataset.timeBlockId);
     };
 
-    // block select
+    // ★グループ選択後「編集できない」体感を潰す：未選択なら先頭ブロックを自動選択
+    const ensureDefaultBlockSelected = () => {
+      if (isEraserActive) return;
+      if (activeTimeBlockId !== null && Number.isFinite(activeTimeBlockId)) return;
+
+      const first = document.querySelector('.spLegend__item[data-time-block-id]');
+      if (first) setActiveTimeBlock(first);
+    };
+
+    // 時間ブロック選択
     document.querySelectorAll(".spLegend__item[data-time-block-id]").forEach((btn) => {
-      btn.addEventListener("click", () => {
-        setActiveTimeBlock(btn);
-      });
+      btn.addEventListener("click", () => setActiveTimeBlock(btn));
     });
 
-    // eraser toggle（時間ブロック選択と同じ操作感）
+    // 消しゴム（トグル）
     eraserBtn.addEventListener("click", (e) => {
       e.preventDefault();
       setEraserActive(!isEraserActive);
     });
 
-    // reset (gantt only)
-    resetBtn.addEventListener("click", () => {
+    // ガントリセット（ガントだけ）
+    resetBtn.addEventListener("click", (e) => {
+      e.preventDefault();
       slots = Array(96).fill(null);
       renderBlocks();
       updateHidden();
     });
 
-    const showHover = (slot) => {
-      lane.classList.add("is-hovering");
-      hover.style.left = `calc(${slot - displayRange.start} * ${SLOT_W}px)`;
-    };
-
-    const hideHover = () => {
-      lane.classList.remove("is-hovering");
-    };
-
+    // ===== drag events =====
     lane.addEventListener("pointermove", (e) => {
       if (lane.classList.contains("is-disabled")) return;
 
@@ -235,19 +244,24 @@
       updateHidden();
     });
 
-    lane.addEventListener("pointerup", () => {
+    const endDrag = () => {
       isDragging = false;
       dragStartSlot = null;
-    });
+    };
 
-    lane.addEventListener("pointercancel", () => {
-      isDragging = false;
-      dragStartSlot = null;
-    });
+    lane.addEventListener("pointerup", endDrag);
+    lane.addEventListener("pointercancel", endDrag);
 
-    const rangeForGroup = (gid) => {
-      const r = groupRanges[String(gid)];
-      return r ? { start: r.start, end: r.end } : { start: 36, end: 80 };
+    // optionの data-start-slot / data-end-slot を採用
+    const rangeFromSelectedOption = () => {
+      const opt = groupSelect.selectedOptions?.[0];
+      if (!opt) return null;
+
+      const start = Number(opt.dataset.startSlot);
+      const end = Number(opt.dataset.endSlot);
+
+      if (!Number.isFinite(start) || !Number.isFinite(end) || end <= start) return null;
+      return { start, end };
     };
 
     const applyGroup = () => {
@@ -258,7 +272,10 @@
         displayRange = { start: 36, end: 80 };
       } else {
         setDisabled(false);
-        displayRange = rangeForGroup(gid);
+        displayRange = rangeFromSelectedOption() || { start: 36, end: 80 };
+
+        // ★グループ選択したら「すぐ編集できる」状態にする
+        ensureDefaultBlockSelected();
       }
 
       setSlotsWidth();
@@ -273,11 +290,18 @@
     applyGroup();
   };
 
-  // Turbo対応：遷移しても毎回初期化
+  // Turbo対応：遷移しても初期化
   document.addEventListener("turbo:load", initShiftPatternEditor);
   document.addEventListener("turbo:render", initShiftPatternEditor);
 
-  // Turboが無い/無効化されてる場合の保険
+  // Turboキャッシュ復元対策：boundフラグを消して再初期化可能にする
+  document.addEventListener("turbo:before-cache", () => {
+    document.querySelectorAll('[data-sp-editor="1"]').forEach((el) => {
+      delete el.dataset.spBound;
+    });
+  });
+
+  // Turboが無い/無効化の保険
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", initShiftPatternEditor);
   } else {

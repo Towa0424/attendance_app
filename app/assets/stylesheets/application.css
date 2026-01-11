@@ -210,7 +210,6 @@ a:hover{ text-decoration: underline; }
   opacity: .85;
   cursor: pointer;
 }
-
 .input[type="date"]::-webkit-calendar-picker-indicator:hover{ opacity: 1; }
 
 .grid2{
@@ -218,7 +217,6 @@ a:hover{ text-decoration: underline; }
   grid-template-columns: 1fr 1fr;
   gap: 12px;
 }
-
 @media (max-width: 720px){
   .grid2{ grid-template-columns: 1fr; }
 }
@@ -265,7 +263,6 @@ a:hover{ text-decoration: underline; }
   color: #fff;
   box-shadow: 0 12px 26px rgba(46,164,79,.18);
 }
-
 .btn--primary:hover{
   background: rgba(46,164,79,1);
   border-color: rgba(46,164,79,1);
@@ -275,7 +272,6 @@ a:hover{ text-decoration: underline; }
   background: transparent;
   border-color: rgba(17,24,39,.14);
 }
-
 .btn--ghost:hover{
   background: rgba(17,24,39,.04);
   box-shadow: none;
@@ -286,11 +282,18 @@ a:hover{ text-decoration: underline; }
   border-color: rgba(239,68,68,.95);
   color: #fff;
 }
-
 .btn--danger:hover{ background: rgba(239,68,68,1); }
 
 .btn--sm{ padding: 7px 10px; font-size: 12px; }
 .btn--compact{ height: var(--control-h); padding: 0 14px; font-size: 13px; }
+
+/* Shift Pattern: Eraser ON state */
+.btn.is-on{
+  background: rgba(239,68,68,.08);
+  border-color: rgba(239,68,68,.25);
+  color: rgba(185,28,28,.92);
+  box-shadow: 0 0 0 3px rgba(239,68,68,.10);
+}
 
 /* ========== Alerts ========== */
 .alert{
@@ -523,227 +526,177 @@ button[disabled]{
 }
 
 /* =========================================================
-   Shift Patterns (Admin) - Gantt Editor + List Preview
-   - Works with the admin/shift_patterns views previously provided
+   Shift Patterns (Admin) - Form + Gantt Editor + Mini Preview
+   - (今回の修正を統合済み：グループで編集可 + ガントだけ横スクロール)
    ========================================================= */
 
-/* Legend */
-.spLegend{
+/* ---- Form layout ---- */
+.spForm{ min-width: 0; } /* Grid配下のはみ出し防止 */
+
+.spTopGrid{
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  min-width: 0;
+}
+@media (max-width: 860px){
+  .spTopGrid{ grid-template-columns: 1fr; }
+}
+
+.spBar{
   display:flex;
-  align-items:flex-start;
+  align-items:center;
   justify-content:space-between;
   gap: 12px;
   flex-wrap: wrap;
-  margin: 6px 0 10px;
+  margin-top: 8px;
+  min-width: 0;
 }
 
-.spLegend__blocks{
+/* Legend (時間ブロック) */
+.spLegend{
   display:flex;
+  gap: 10px;
   flex-wrap: wrap;
-  gap: 8px;
   align-items:center;
+  min-width: 0;
 }
 
 .spLegend__item{
   appearance:none;
-  cursor:pointer;
-  border: 1px solid rgba(17,24,39,.14);
-  background: #fff;
-  color: rgba(17,24,39,.86);
-  padding: 7px 10px;
-  border-radius: 999px;
-  font-size: 12px;
-  font-weight: 900;
   display:inline-flex;
   align-items:center;
-  gap: 8px;
-  transition: background .12s ease, border-color .12s ease, box-shadow .12s ease, transform .06s ease;
+  gap: 10px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(17,24,39,.14);
+  background: #fff;
+  cursor:pointer;
+  font-weight: 900;
+  font-size: 12px;
+  color: rgba(17,24,39,.86);
+  transition: box-shadow .12s ease, border-color .12s ease, background .12s ease, transform .06s ease;
 }
 
 .spLegend__item:hover{
   border-color: rgba(17,24,39,.22);
   box-shadow: 0 0 0 3px rgba(46,164,79,.10);
 }
+.spLegend__item:active{ transform: translateY(1px); }
 
 .spLegend__item.is-active{
   background: rgba(46,164,79,.10);
-  border-color: rgba(46,164,79,.35);
+  border-color: rgba(46,164,79,.45);
   box-shadow: 0 0 0 3px rgba(46,164,79,.12);
 }
 
-.spDot{
-  --c:#2ea44f;
+.spLegend__dot{
   width: 10px;
   height: 10px;
   border-radius: 999px;
   background: var(--c);
-  border: 1px solid rgba(17,24,39,.18);
-  box-shadow: 0 10px 22px rgba(17,24,39,.10);
+  border: 1px solid rgba(17,24,39,.14);
 }
 
-.spLegend__tools{
+.spTools{
   display:flex;
   gap: 10px;
   align-items:center;
 }
 
-.spToolBtn{
-  height: 34px;
-  border-radius: 999px;
-  padding: 0 12px;
-  border: 1px solid rgba(17,24,39,.14);
-  background: #fff;
-  color: rgba(17,24,39,.86);
-  cursor: pointer;
-  font-size: 12px;
-  font-weight: 900;
-  display:inline-flex;
-  align-items:center;
-  gap: 8px;
-  user-select:none;
-  transition: box-shadow .12s ease, border-color .12s ease, background .12s ease;
+.spGanttRow{
+  margin-top: 10px;
+  min-width: 0; /* ここ重要：ガントだけスクロールにするためのはみ出し止め */
 }
 
-.spToolBtn:hover{
-  border-color: rgba(17,24,39,.22);
-  box-shadow: 0 0 0 3px rgba(46,164,79,.10);
-}
-
-.spToolBtn__icon{ opacity:.85; }
-
-.spToolBtn.is-on{
-  background: rgba(239,68,68,.08);
-  border-color: rgba(239,68,68,.25);
-  color: rgba(185,28,28,.92);
-  box-shadow: 0 0 0 3px rgba(239,68,68,.10);
-}
-
-/* Editor frame */
-.spWrap{
-  --slot-w: 18px;
-  --slots: 44;
+.spSubmitRow{
+  display:flex;
+  justify-content:flex-end;
   margin-top: 12px;
-  overflow: auto;
 }
 
-.spFrame{
-  width: calc(var(--slot-w) * var(--slots));
-  min-width: 420px;
+/* ---- Gantt scroll container：ガントのみ横スクロール ---- */
+.timelineWrap{
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding-bottom: 6px;
+  min-width: 0;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* 中身幅で止める（中身が長いときだけ timelineWrap にスクロールが出る） */
+.timeline{
+  display: inline-block;
   border: 1px solid rgba(17,24,39,.12);
   border-radius: 14px;
-  overflow: hidden;
   background: #fff;
+  overflow: hidden;
   box-shadow: var(--shadow-soft);
 }
 
-/* hours: hour lines only */
+/* ---- Hours ---- */
 .spHours{
-  height: 44px;
-  position: relative;
+  display:flex;
+  align-items:stretch;
+  border-bottom: 1px solid rgba(17,24,39,.10);
   background: #fff;
-  border-bottom: 2px solid rgba(17,24,39,.18);
 }
 
-.spHours::after{
-  content:"";
-  position:absolute;
-  inset:0;
-  pointer-events:none;
-  z-index: 10;
-  background:
-    repeating-linear-gradient(
-      to right,
-      transparent 0,
-      transparent calc((var(--slot-w) * 4) - 2px),
-      rgba(17,24,39,0.18) calc((var(--slot-w) * 4) - 2px),
-      rgba(17,24,39,0.18) calc(var(--slot-w) * 4)
-    );
-}
-
-.spHours__row{
-  position: relative;
-  z-index: 20;
-  height: 100%;
-  width: 100%;
-  display: grid;
-  grid-auto-flow: column;
-  grid-auto-columns: calc(var(--slot-w) * 4);
-  align-items: center;
-  padding-right: 0;
+.spHoursRow{
+  display:flex; /* grid禁止：要素がある分だけ表示 */
+  align-items:stretch;
 }
 
 .spHourCell{
-  height: 100%;
-  display:flex;
-  align-items:flex-start;
-  padding: 10px 0 0 8px;
-  font-size: 12px;
+  flex: 0 0 calc(var(--slot-w, 18px) * 4); /* 1時間=15分×4 */
+  padding: 8px 10px;
   font-weight: 900;
+  font-size: 12px;
   color: rgba(17,24,39,.74);
+  border-right: 1px solid rgba(17,24,39,.12);
   white-space: nowrap;
 }
 
-.spHours__end{
-  position:absolute;
-  right: 8px;
-  top: 10px;
-  z-index: 30;
-  font-size: 12px;
+.spHoursEnd{
+  padding: 8px 10px;
   font-weight: 900;
+  font-size: 12px;
   color: rgba(17,24,39,.74);
-  background: linear-gradient(to right, rgba(255,255,255,0), #fff 45%);
-  padding: 0 2px 0 10px;
+  border-left: 1px solid rgba(17,24,39,.12);
   white-space: nowrap;
 }
 
-/* lane: 15min + hour lines always visible (on top) */
+/* ---- Lane ---- */
 .spLane{
-  height: 44px;
   position: relative;
-  background: #fff;
+  height: 52px;
   cursor: crosshair;
-}
-
-.spLane::after{
-  content:"";
-  position:absolute;
-  inset:0;
-  pointer-events:none;
-  z-index: 20;
+  /* 1時間線 + 15分線 */
   background:
-    /* 15min */
-    repeating-linear-gradient(
-      to right,
-      transparent 0,
-      transparent calc(var(--slot-w) - 1px),
-      rgba(17,24,39,0.08) calc(var(--slot-w) - 1px),
-      rgba(17,24,39,0.08) var(--slot-w)
-    ),
-    /* 1hour */
-    repeating-linear-gradient(
-      to right,
-      transparent 0,
-      transparent calc((var(--slot-w) * 4) - 2px),
-      rgba(17,24,39,0.18) calc((var(--slot-w) * 4) - 2px),
-      rgba(17,24,39,0.18) calc(var(--slot-w) * 4)
-    );
+    linear-gradient(to right, rgba(17,24,39,.10) 1px, transparent 1px) 0 0 / calc(var(--slot-w, 18px) * 4) 100%,
+    linear-gradient(to right, rgba(17,24,39,.06) 1px, transparent 1px) 0 0 / var(--slot-w, 18px) 100%;
 }
 
 .spLane.is-disabled{
-  opacity:.60;
-  cursor:not-allowed;
+  opacity: .55;
+  pointer-events: none;
 }
 
-.spLane.is-disabled:before{
-  content:"グループ選択後に編集できます";
+/* ヒントは disabled のときだけ表示 */
+.spLane__hint{
   position:absolute;
-  inset:0;
-  display:grid;
+  inset: 0;
+  display:none;
   place-items:center;
-  font-size:12px;
-  color: rgba(17,24,39,.70);
-  background: rgba(255,255,255,.55);
-  z-index: 50;
+  font-size: 12px;
+  font-weight: 800;
+  color: rgba(17,24,39,.55);
+  pointer-events:none;
+}
+.spLane.is-disabled .spLane__hint{
+  display:grid;
 }
 
 /* hover */
@@ -751,34 +704,35 @@ button[disabled]{
   position:absolute;
   top:0;
   bottom:0;
-  width: var(--slot-w);
+  width: var(--slot-w, 18px);
   background: rgba(46,164,79,.10);
   outline: 1px solid rgba(46,164,79,.18);
-  display:none;
-  z-index: 30;
+  opacity: 0;
   pointer-events:none;
 }
+.spLane.is-hovering .spHover{ opacity: 1; }
 
-.spLane.is-hovering .spHover{ display:block; }
-
-/* painted blocks under gridlines */
+/* painted blocks */
 .spBlock{
   --c:#2ea44f;
   position:absolute;
-  top: 7px;
-  height: 30px;
-  left: calc(var(--start) * var(--slot-w));
-  width: calc((var(--end) - var(--start)) * var(--slot-w));
+  top: 12px;
+  bottom: 12px;
+  left: calc(var(--start) * var(--slot-w, 18px));
+  width: calc((var(--end) - var(--start)) * var(--slot-w, 18px));
   border-radius: 10px;
-  border: 1px solid rgba(17,24,39,.12);
-  background: var(--c);
-  opacity: .78;
-  z-index: 10;
+  background: color-mix(in srgb, var(--c) 70%, white 30%);
+  border: 1px solid color-mix(in srgb, var(--c) 70%, black 10%);
+  opacity: .92;
   pointer-events:none;
 }
 
-/* Index mini preview */
-.spMiniScroll{ width:100%; overflow-x:auto; overflow-y:hidden; }
+/* ---- Index mini preview (必要なら使用) ---- */
+.spMiniScroll{
+  width:100%;
+  overflow-x:auto;
+  overflow-y:hidden;
+}
 
 .spMini{
   --slot-w: 10px;
@@ -797,22 +751,6 @@ button[disabled]{
   height: 26px;
   background: #fff;
   border-bottom: 1px solid rgba(17,24,39,.10);
-}
-
-.spMini__hours::after{
-  content:"";
-  position:absolute;
-  inset:0;
-  pointer-events:none;
-  z-index: 5;
-  background:
-    repeating-linear-gradient(
-      to right,
-      transparent 0,
-      transparent calc((var(--slot-w) * 4) - 2px),
-      rgba(17,24,39,0.14) calc((var(--slot-w) * 4) - 2px),
-      rgba(17,24,39,0.14) calc(var(--slot-w) * 4)
-    );
 }
 
 .spMini__label{
@@ -853,7 +791,7 @@ button[disabled]{
   pointer-events:none;
   z-index: 20;
   background:
-    /* 15min thin */
+    /* 15min */
     repeating-linear-gradient(
       to right,
       transparent 0,
@@ -861,7 +799,7 @@ button[disabled]{
       rgba(17,24,39,0.06) calc(var(--slot-w) - 1px),
       rgba(17,24,39,0.06) var(--slot-w)
     ),
-    /* 1hour stronger */
+    /* 1hour */
     repeating-linear-gradient(
       to right,
       transparent 0,
@@ -871,36 +809,43 @@ button[disabled]{
     );
 }
 
-.spBlock{
-  --c:#2ea44f;
-  position:absolute;
+/* mini内のブロックは高さを小さくする（spBlock共用の上書き） */
+.spMini .spBlock{
   top: 7px;
+  bottom: auto;
   height: 20px;
-  left: calc(var(--start) * var(--slot-w));
-  width: calc((var(--end) - var(--start)) * var(--slot-w));
   border-radius: 10px;
-  border: 1px solid rgba(17,24,39,.10);
-  z-index: 10;
-  background: var(--c);
-  opacity: .78;
+  opacity: .80;
 }
-/* ===== ShiftPattern meta (under name) ===== */
-.spMeta{
+/* =========================================================
+   Shift Patterns (Admin) - Index meta (time block usage pills)
+   ========================================================= */
+
+.spCell{
+  display:grid;
+  gap: 8px;
+}
+
+.spCell__titleRow{
   display:flex;
+  align-items:center;
   gap: 10px;
-  align-items:flex-start;
   flex-wrap: wrap;
 }
 
-.spMeta__label{
-  font-size: 12px;
+.spCell__title{
   font-weight: 900;
-  color: rgba(17,24,39,.70);
-  padding-top: 3px;
-  min-width: 72px;
+  font-size: 15px;
+  line-height: 1.3;
 }
 
-/* pills */
+.spMeta{ min-width: 0; }
+
+.spMeta__empty{
+  font-size: 12px;
+}
+
+/* “編集画面の時間ブロック表示” っぽい pills */
 .spPills{
   display:flex;
   flex-wrap: wrap;
@@ -912,29 +857,46 @@ button[disabled]{
   display:inline-flex;
   align-items:center;
   gap: 8px;
-  padding: 6px 10px;
+
+  padding: 7px 10px;
   border-radius: 999px;
-  border: 1px solid rgba(17,24,39,.12);
-  background: rgba(46,164,79,.08);
-  color: rgba(17,24,39,.86);
+
+  border: 1px solid rgba(17,24,39,.14);
+  background: #fff;
+
   font-size: 12px;
   font-weight: 900;
+  color: rgba(17,24,39,.86);
+
+  max-width: 100%;
 }
 
 .spPill__dot{
-  --c:#2ea44f;
   width: 10px;
   height: 10px;
   border-radius: 999px;
   background: var(--c);
-  border: 1px solid rgba(17,24,39,.18);
+  border: 1px solid rgba(17,24,39,.14);
+  flex: 0 0 auto;
 }
 
 .spPill__name{
-  line-height: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 220px; /* ここは好みで調整 */
 }
 
+/* 右側の合計時間（不要ならERB側で消してOK） */
 .spPill__time{
+  margin-left: 2px;
   font-weight: 900;
-  color: rgba(17,24,39,.62);
+  color: rgba(17,24,39,.60);
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+/* タイトル列が狭い時に “時間” を落としても崩れないように */
+@media (max-width: 920px){
+  .spPill__name{ max-width: 160px; }
 }
