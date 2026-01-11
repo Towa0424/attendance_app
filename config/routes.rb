@@ -12,5 +12,11 @@ Rails.application.routes.draw do
     resources :groups, only: %i[index new create edit update]
     resources :time_blocks, only: %i[index new create edit update]
     resources :shift_patterns, only: %i[index new create edit update]
+
+    resources :shifts, only: %i[index] do
+      collection do
+        patch :assign
+      end
+    end
   end
 end

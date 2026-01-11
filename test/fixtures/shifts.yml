@@ -1,0 +1,13 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  user: one
+  group: one
+  shift_pattern: one
+  work_date: 2026-01-11
+
+two:
+  user: two
+  group: two
+  shift_pattern: two
+  work_date: 2026-01-11

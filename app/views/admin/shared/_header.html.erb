@@ -7,6 +7,9 @@
 
     <nav class="adminNav" aria-label="管理者メニュー">
 
+      <%= link_to "シフト管理", admin_shifts_path,
+      class: "adminNav__link #{'is-active' if current_page?(admin_shifts_path)}" %>
+      
       <%= link_to "スタッフ管理", admin_users_path,
             class: "adminNav__link #{'is-active' if current_page?(admin_users_path)}" %>
 

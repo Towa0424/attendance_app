@@ -1,5 +1,6 @@
 class TimeBlock < ApplicationRecord
   has_many :shift_pattern_details, dependent: :restrict_with_error
+  has_many :shift_details, dependent: :restrict_with_error
 
   validates :name, presence: true, length: { maximum: 50 }, uniqueness: true
 

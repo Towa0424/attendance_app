@@ -1,0 +1,87 @@
+<% return if @group.nil? %>
+
+<div class="shiftDayHead">
+  <div class="shiftDayHead__left">
+    <span class="tag"><%= @date.strftime("%Y/%m/%d") %></span>
+    <span class="muted" style="font-size:12px; margin-left:8px;">
+      表示時間：<%= ShiftPattern.slot_to_hhmm(@range_start) %> 〜 <%= ShiftPattern.slot_to_hhmm(@range_end) %>
+    </span>
+  </div>
+
+  <div class="shiftDayHead__nav">
+    <%= link_to "前日",
+          admin_shifts_path(group_id: @group_id, view: "day", date: (@date - 1).iso8601),
+          class: "btn btn--ghost btn--sm" %>
+
+    <%= link_to "今日",
+          admin_shifts_path(group_id: @group_id, view: "day", date: Date.current.iso8601),
+          class: "btn btn--ghost btn--sm" %>
+
+    <%= link_to "翌日",
+          admin_shifts_path(group_id: @group_id, view: "day", date: (@date + 1).iso8601),
+          class: "btn btn--ghost btn--sm" %>
+  </div>
+</div>
+
+<div class="shiftDayGrid" style="--slot-w:18px; --slots:<%= (@range_end - @range_start) %>;">
+  <div class="shiftDayGrid__nameCol">
+    <div class="shiftDayGrid__nameHead">氏名</div>
+    <% @users.each do |u| %>
+      <div class="shiftDayGrid__nameCell">
+        <div class="shiftUserCell">
+          <div class="shiftUserCell__name"><%= u.name %></div>
+          <div class="shiftUserCell__sub muted"><%= u.employee_number %></div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="shiftDayGrid__ganttCol">
+    <!-- 横スクロールはここだけ -->
+    <div class="shiftDayScroll">
+      <div class="shiftDayCanvas">
+        <!-- Hours -->
+        <div class="shiftDayHours">
+          <div class="shiftDayHoursRow">
+            <% ((@range_start / 4)...(@range_end / 4)).each do |h| %>
+              <div class="shiftDayHourCell"><%= format("%02d:00", h) %></div>
+            <% end %>
+          </div>
+
+          <% unless @end_on_hour %>
+            <div class="shiftDayHoursEnd"><%= ShiftPattern.slot_to_hhmm(@range_end) %></div>
+          <% end %>
+        </div>
+
+        <!-- Lanes -->
+        <% @users.each do |u| %>
+          <% shift = @shifts_by_user[u.id] %>
+          <% blocks = [] %>
+          <% if shift.present? %>
+            <% slots  = shift.slots_array %>
+            <% blocks = ShiftPattern.blocks_from_slots(slots, range_start: @range_start, range_end: @range_end) %>
+          <% end %>
+
+          <div class="shiftDayLane">
+            <% blocks.each do |b| %>
+              <% tb = @time_block_map[b[:time_block_id]] %>
+              <% next if tb.nil? %>
+
+              <div class="shiftDayBlock"
+                   style="--start:<%= (b[:start] - @range_start) %>; --end:<%= (b[:end] - @range_start) %>; --c:<%= tb.color_code %>;"
+                   title="<%= tb.name %>"></div>
+            <% end %>
+
+            <% if shift.blank? %>
+              <div class="shiftDayLane__hint">（未設定）</div>
+            <% end %>
+          </div>
+        <% end %>
+
+        <% if @users.empty? %>
+          <div class="muted ta-c" style="padding:14px;">このグループにスタッフがいません。</div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

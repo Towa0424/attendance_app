@@ -900,3 +900,486 @@ button[disabled]{
 @media (max-width: 920px){
   .spPill__name{ max-width: 160px; }
 }
+
+/* =========================================================
+   Shift Management (Admin)
+   - month grid + day gantt
+   ========================================================= */
+
+.shiftToolbar{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
+.shiftToolbar__form{
+  display:flex;
+  align-items:center;
+  gap: 10px;
+}
+
+.shiftToolbar__label{
+  font-size: 12px;
+  color: rgba(17,24,39,.78);
+  font-weight: 800;
+}
+
+.shiftToolbar__month,
+.shiftToolbar__date{
+  width: 180px;
+}
+
+.shiftMonthScroll{
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.shiftMonthTable{
+  min-width: 980px;
+}
+
+.shiftMonthTable__name{
+  width: 220px;
+}
+
+.shiftMonthTable__day{
+  width: 64px;
+  text-align: center;
+}
+
+.shiftMonthTable__nameCell{
+  white-space: nowrap;
+}
+
+.shiftUser{
+  display:grid;
+  gap: 2px;
+}
+
+.shiftUser__name{
+  font-weight: 900;
+}
+
+.shiftUser__meta{
+  font-size: 12px;
+}
+
+.shiftCell{
+  display:grid;
+  gap: 4px;
+}
+
+.shiftCell__select{
+  padding: 9px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+}
+
+.shiftCell__status{
+  font-size: 11px;
+  line-height: 1;
+  min-height: 12px;
+  color: rgba(17,24,39,.55);
+}
+
+.shiftCell__status.is-saving{ color: rgba(17,24,39,.65); }
+.shiftCell__status.is-saved{ color: rgba(34,197,94,.85); }
+.shiftCell__status.is-error{ color: rgba(239,68,68,.90); }
+
+/* ----- day view layout (names | gantt(scroll only) | pattern) ----- */
+.shiftDay{
+  display:grid;
+  grid-template-columns: 220px 1fr 220px;
+  border-top: 1px solid rgba(17,24,39,.08);
+}
+
+.shiftDay__names,
+.shiftDay__patterns{
+  display:grid;
+  grid-template-rows: 44px;
+  grid-auto-rows: 52px;
+  background: rgba(255,255,255,.96);
+}
+
+.shiftDay__names{
+  border-right: 1px solid rgba(17,24,39,.10);
+}
+
+.shiftDay__patterns{
+  border-left: 1px solid rgba(17,24,39,.10);
+}
+
+.shiftDay__gantt{
+  display:grid;
+  grid-template-rows: 44px auto;
+  background: rgba(255,255,255,.96);
+}
+
+.shiftDay__head{
+  display:flex;
+  align-items:center;
+  padding: 0 12px;
+  font-weight: 900;
+  font-size: 12px;
+  color: rgba(17,24,39,.74);
+  background: rgba(46,164,79,.06);
+  border-bottom: 1px solid rgba(17,24,39,.10);
+}
+
+.shiftDay__name,
+.shiftDay__pattern{
+  display:flex;
+  align-items:center;
+  padding: 0 12px;
+  border-bottom: 1px solid rgba(17,24,39,.08);
+}
+
+.shiftDayScroll{
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding-bottom: 6px;
+}
+
+.shiftDayInner{
+  --slot-w: 18px;
+  width: calc(var(--slots) * var(--slot-w));
+  min-width: 640px;
+  display:grid;
+  grid-template-rows: 44px;
+  grid-auto-rows: 52px;
+}
+
+/* axis */
+.shiftHours{
+  position: relative;
+  border-bottom: 2px solid rgba(17,24,39,.18);
+  background: #fff;
+}
+
+.shiftHours::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  z-index: 5;
+  background:
+    repeating-linear-gradient(
+      to right,
+      transparent 0,
+      transparent calc((var(--slot-w) * 4) - 2px),
+      rgba(17,24,39,0.18) calc((var(--slot-w) * 4) - 2px),
+      rgba(17,24,39,0.18) calc(var(--slot-w) * 4)
+    );
+}
+
+.shiftHoursRow{
+  position: relative;
+  z-index: 10;
+  display:flex;
+  height: 44px;
+}
+
+.shiftHourCell{
+  flex: 0 0 calc(var(--slot-w) * 4);
+  padding: 10px 0 0 8px;
+  font-size: 12px;
+  font-weight: 900;
+  color: rgba(17,24,39,.74);
+  white-space: nowrap;
+}
+
+.shiftHoursEnd{
+  position:absolute;
+  right: 8px;
+  top: 10px;
+  z-index: 12;
+  font-size: 12px;
+  font-weight: 900;
+  color: rgba(17,24,39,.74);
+  background: linear-gradient(to right, rgba(255,255,255,0), #fff 45%);
+  padding: 0 2px 0 10px;
+  white-space: nowrap;
+}
+
+/* lane */
+.shiftLane{
+  position: relative;
+  height: 52px;
+  background:
+    repeating-linear-gradient(
+      to right,
+      transparent 0,
+      transparent calc(var(--slot-w) - 1px),
+      rgba(17,24,39,0.06) calc(var(--slot-w) - 1px),
+      rgba(17,24,39,0.06) var(--slot-w)
+    ),
+    repeating-linear-gradient(
+      to right,
+      transparent 0,
+      transparent calc((var(--slot-w) * 4) - 2px),
+      rgba(17,24,39,0.14) calc((var(--slot-w) * 4) - 2px),
+      rgba(17,24,39,0.14) calc(var(--slot-w) * 4)
+    );
+  border-bottom: 1px solid rgba(17,24,39,.08);
+  background-color: #fff;
+}
+
+.shiftBlock{
+  position:absolute;
+  top: 12px;
+  bottom: 12px;
+  left: calc(var(--start) * var(--slot-w));
+  width: calc((var(--end) - var(--start)) * var(--slot-w));
+  border-radius: 10px;
+  border: 1px solid rgba(17,24,39,.10);
+  background: var(--c);
+  opacity: .78;
+  pointer-events:none;
+}
+/* =========================================================
+   Shift Management (Admin) - Month / Day
+   ========================================================= */
+
+.shiftToolbar{
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.shiftToggle{
+  display:flex;
+  gap: 8px;
+  align-items:center;
+}
+
+.shiftToggle__btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding: 8px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(17,24,39,.14);
+  background: rgba(255,255,255,.96);
+  font-weight: 900;
+  font-size: 13px;
+  text-decoration:none;
+  color: rgba(17,24,39,.86);
+}
+
+.shiftToggle__btn:hover{
+  border-color: rgba(17,24,39,.22);
+  box-shadow: 0 0 0 3px rgba(46,164,79,.10);
+  text-decoration:none;
+}
+
+.shiftToggle__btn.is-active{
+  background: var(--primary-soft);
+  border-color: rgba(46,164,79,.45);
+}
+
+.shiftMonthHead{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap: 10px;
+  padding: 14px 16px;
+  border-bottom: 1px solid rgba(17,24,39,.08);
+}
+
+.shiftMonthScroll{
+  overflow-x:auto;
+}
+
+.shiftMonthTable{
+  min-width: 980px;
+}
+
+.shiftMonthTable__thName{
+  position: sticky;
+  left: 0;
+  z-index: 3;
+  background: rgba(46,164,79,.06);
+}
+
+.shiftMonthTable__nameCell{
+  position: sticky;
+  left: 0;
+  z-index: 2;
+  background: rgba(255,255,255,.96);
+  border-right: 1px solid rgba(17,24,39,.08);
+}
+
+.shiftMonthTable__thDay{
+  text-align:center;
+  white-space: nowrap;
+}
+
+.shiftDayHeadNum{ font-weight: 900; }
+.shiftDayHeadWday{ font-size: 12px; color: rgba(17,24,39,.62); }
+
+.shiftCell{
+  vertical-align: middle;
+}
+
+.shiftCell.is-weekend{
+  background: rgba(17,24,39,.02);
+}
+
+.shiftCell.is-today{
+  outline: 2px solid rgba(46,164,79,.18);
+  outline-offset: -2px;
+}
+
+.select--xs{
+  padding: 8px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+}
+
+.shiftCell__select{
+  width: 100%;
+  min-width: 120px;
+}
+
+.shiftCell__select.is-loading{
+  opacity: .65;
+}
+
+.shiftUserCell{
+  display:grid;
+  gap: 2px;
+}
+
+.shiftUserCell__name{
+  font-weight: 900;
+  font-size: 14px;
+}
+
+.shiftUserCell__sub{
+  font-size: 12px;
+}
+
+/* ===== Day View ===== */
+
+.shiftDayHead{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap: 10px;
+  padding: 14px 16px;
+  border-bottom: 1px solid rgba(17,24,39,.08);
+}
+
+.shiftDayGrid{
+  display:grid;
+  grid-template-columns: 260px 1fr;
+  align-items:start;
+}
+
+.shiftDayGrid__nameCol{
+  border-right: 1px solid rgba(17,24,39,.08);
+  background: rgba(255,255,255,.96);
+}
+
+.shiftDayGrid__nameHead{
+  height: 44px;
+  display:flex;
+  align-items:center;
+  padding: 0 14px;
+  font-weight: 900;
+  border-bottom: 1px solid rgba(17,24,39,.08);
+}
+
+.shiftDayGrid__nameCell{
+  height: 44px;
+  display:flex;
+  align-items:center;
+  padding: 0 14px;
+  border-bottom: 1px solid rgba(17,24,39,.06);
+}
+
+.shiftDayGrid__ganttCol{
+  background: rgba(255,255,255,.96);
+}
+
+.shiftDayScroll{
+  overflow-x:auto;
+}
+
+.shiftDayCanvas{
+  width: calc(var(--slots) * var(--slot-w));
+  min-width: 720px;
+}
+
+.shiftDayHours{
+  height: 44px;
+  position: relative;
+  border-bottom: 2px solid rgba(17,24,39,.18);
+  background: #fff;
+}
+
+.shiftDayHoursRow{
+  height: 100%;
+  display:flex;
+  align-items:stretch;
+}
+
+.shiftDayHourCell{
+  flex: 0 0 calc(var(--slot-w) * 4);
+  padding: 10px 0 0 8px;
+  font-size: 12px;
+  font-weight: 900;
+  color: rgba(17,24,39,.74);
+  border-right: 1px solid rgba(17,24,39,.12);
+  white-space: nowrap;
+}
+
+.shiftDayHoursEnd{
+  position:absolute;
+  right: 8px;
+  top: 10px;
+  font-size: 12px;
+  font-weight: 900;
+  color: rgba(17,24,39,.74);
+  background: linear-gradient(to right, rgba(255,255,255,0), #fff 45%);
+  padding: 0 2px 0 10px;
+  white-space: nowrap;
+}
+
+.shiftDayLane{
+  height: 44px;
+  position: relative;
+  background:
+    linear-gradient(to right, rgba(17,24,39,.18) 1px, transparent 1px) 0 0 / calc(var(--slot-w) * 4) 100%,
+    linear-gradient(to right, rgba(17,24,39,.08) 1px, transparent 1px) 0 0 / var(--slot-w) 100%;
+  border-bottom: 1px solid rgba(17,24,39,.06);
+}
+
+.shiftDayLane__hint{
+  position:absolute;
+  inset:0;
+  display:flex;
+  align-items:center;
+  padding-left: 10px;
+  font-size: 12px;
+  color: rgba(17,24,39,.55);
+  pointer-events:none;
+}
+
+.shiftDayBlock{
+  --c:#2ea44f;
+  position:absolute;
+  top: 7px;
+  height: 30px;
+  left: calc(var(--start) * var(--slot-w));
+  width: calc((var(--end) - var(--start)) * var(--slot-w));
+  border-radius: 10px;
+  border: 1px solid rgba(17,24,39,.12);
+  background: var(--c);
+  opacity: .78;
+}

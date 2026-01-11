@@ -1,0 +1,75 @@
+<% return if @group.nil? %>
+
+<div class="shiftMonthHead">
+  <div class="shiftMonthHead__title">
+    <span class="tag"><%= @month.strftime("%Y年%m月") %></span>
+  </div>
+
+  <div class="shiftMonthHead__nav">
+    <%= link_to "前月",
+          admin_shifts_path(group_id: @group_id, view: "month", month: (@month.prev_month.strftime("%Y-%m"))),
+          class: "btn btn--ghost btn--sm" %>
+
+    <%= link_to "今月",
+          admin_shifts_path(group_id: @group_id, view: "month", month: (Date.current.strftime("%Y-%m"))),
+          class: "btn btn--ghost btn--sm" %>
+
+    <%= link_to "翌月",
+          admin_shifts_path(group_id: @group_id, view: "month", month: (@month.next_month.strftime("%Y-%m"))),
+          class: "btn btn--ghost btn--sm" %>
+  </div>
+</div>
+
+<div class="shiftMonthScroll">
+  <table class="table shiftMonthTable">
+    <thead>
+      <tr>
+        <th class="shiftMonthTable__thName">氏名</th>
+        <% @days.each do |d| %>
+          <% w = %w[日 月 火 水 木 金 土][d.wday] %>
+          <th class="shiftMonthTable__thDay <%= 'is-weekend' if d.saturday? || d.sunday? %> <%= 'is-today' if d == Date.current %>">
+            <div class="shiftDayHeadNum"><%= d.day %></div>
+            <div class="shiftDayHeadWday"><%= w %></div>
+          </th>
+        <% end %>
+      </tr>
+    </thead>
+
+    <tbody>
+      <% @users.each do |u| %>
+        <tr>
+          <td class="shiftMonthTable__nameCell">
+            <div class="shiftUserCell">
+              <div class="shiftUserCell__name"><%= u.name %></div>
+              <div class="shiftUserCell__sub muted"><%= u.employee_number %></div>
+            </div>
+          </td>
+
+          <% @days.each do |d| %>
+            <% cur = @shifts_map[[u.id, d]] %>
+
+            <td class="shiftCell <%= 'is-weekend' if d.saturday? || d.sunday? %> <%= 'is-today' if d == Date.current %>">
+              <select
+                class="select select--xs shiftCell__select"
+                data-shift-cell-select="1"
+                data-assign-url="<%= assign_admin_shifts_path %>"
+                data-user-id="<%= u.id %>"
+                data-work-date="<%= d.iso8601 %>">
+                <option value="">未設定</option>
+                <% @shift_patterns.each do |sp| %>
+                  <option value="<%= sp.id %>" <%= "selected" if cur&.shift_pattern_id == sp.id %>>
+                    <%= sp.name %>
+                  </option>
+                <% end %>
+              </select>
+            </td>
+          <% end %>
+        </tr>
+      <% end %>
+
+      <% if @users.empty? %>
+        <tr><td colspan="<%= @days.size + 1 %>" class="muted ta-c">このグループにスタッフがいません。</td></tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
