@@ -3,7 +3,6 @@
     <h1 class="pageHead__title">シフト管理</h1>
 
     <div class="pageHead__actions">
-      <!-- ここに必要なら「CSV」など後で追加 -->
     </div>
   </div>
 
@@ -20,7 +19,6 @@
                   onchange: "this.form.submit();" %>
 
             <%= hidden_field_tag :view, @view_mode %>
-            <%# month/dayで持ち回す %>
             <% if @view_mode == "month" %>
               <%= hidden_field_tag :month, @month&.strftime("%Y-%m") %>
             <% else %>

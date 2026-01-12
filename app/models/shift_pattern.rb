@@ -61,14 +61,9 @@ class ShiftPattern < ApplicationRecord
     [start_slot, end_slot]
   end
 
-  # --- ここから追加 ---
-
-  # 使用している時間ブロックの一覧（出現順）＋合計分数
-  # return: [{time_block:, minutes:, first_slot:}, ...]
   def time_block_usage
     return [] if shift_pattern_details.blank?
 
-    # shift_pattern_details は controller 側で :time_block を includes 済みの前提
     grouped = shift_pattern_details.group_by(&:time_block_id)
 
     grouped.map do |_time_block_id, details|

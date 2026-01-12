@@ -10,7 +10,6 @@ class Shift < ApplicationRecord
 
   validate :group_consistency
 
-  # ShiftPattern と同じ配列生成（0..95）
   def slots_array
     arr = Array.new(ShiftPattern::SLOTS_PER_DAY, nil)
     shift_details.each do |d|
@@ -19,13 +18,11 @@ class Shift < ApplicationRecord
     arr
   end
 
-  # パターンからその日の詳細へコピー（スナップショット化）
   def snapshot_from_pattern!
     return if shift_pattern.nil?
 
     now = Time.current
 
-    # 既存を消して作り直し（最初はこの方が事故りにくい）
     shift_details.delete_all
 
     rows = shift_pattern.shift_pattern_details.map do |d|
