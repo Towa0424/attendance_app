@@ -151,6 +151,7 @@
       lane.dataset.saving = "1";
 
       try {
+        const submitSlots = state.slots.map((val) => (val == null ? "" : val));
         const res = await fetch(updateUrl, {
           method: "PATCH",
           headers: {
@@ -161,7 +162,9 @@
           body: JSON.stringify({
             user_id: userId,
             work_date: workDate,
-            slots: state.slots,
+            slots: submitSlots,
+            range_start: rangeStart,
+            range_end: rangeEnd,            
           }),
         });
 

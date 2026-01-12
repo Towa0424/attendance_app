@@ -94,8 +94,28 @@ module Admin
         
       if slots.is_a?(Array) && slots.length != ShiftPattern::SLOTS_PER_DAY
         group = shift.group || user.group
-        range_length = group.present? ? group.work_end_slot - group.work_start_slot : nil
-                normalized_length = range_length.present? ? range_length : nil
+        param_range_start = params[:range_start].presence&.to_i
+        param_range_end = params[:range_end].presence&.to_i
+        param_range_valid =
+          param_range_start.present? && param_range_end.present? &&
+            param_range_start >= 0 && param_range_end <= ShiftPattern::SLOTS_PER_DAY &&
+            param_range_start < param_range_end
+
+        range_start = if param_range_valid
+                        param_range_start
+                      else
+                        group&.work_start_slot
+                      end
+        range_end = if param_range_valid
+                      param_range_end
+                    else
+                      group&.work_end_slot
+                    end
+
+        normalized_length =
+          if range_start.present? && range_end.present?
+            range_end - range_start
+          end
 
         if normalized_length.present? && slots.length == normalized_length + 1
           slots = slots.first(normalized_length)
@@ -104,7 +124,7 @@ module Admin
         if normalized_length.present? && slots.length == normalized_length
           normalized = Array.new(ShiftPattern::SLOTS_PER_DAY, nil)
           slots.each_with_index do |val, idx|
-            normalized[group.work_start_slot + idx] = val
+            normalized[range_start + idx] = val
           end
           slots = normalized
         end
