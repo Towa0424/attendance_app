@@ -1,24 +1,46 @@
-# README
+# Attendance App
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+## アプリケーション名
+Attendance App
 
-Things you may want to cover:
+## アプリケーション概要
+勤怠の打刻と管理を行う勤怠管理アプリです。従業員は打刻（出退勤登録）を行い、管理者はユーザー・グループ・勤務時間帯・シフトパターンを管理し、シフトの割り当てや詳細更新を行えます。
 
-* Ruby version
+## URL
+- 未デプロイ（デプロイ完了後に追記）
 
-* System dependencies
+## テスト用アカウント
+- 未設定（ログイン情報・Basic認証情報が整い次第追記）
 
-* Configuration
+## 利用方法
+- ログイン後、勤怠一覧から打刻を登録します。
+- 管理者は管理画面からユーザー・グループ・勤務時間帯・シフトパターンを管理します。
+- 管理者はシフト一覧で割り当て・詳細更新を行います。
 
-* Database creation
+## アプリケーションを作成した背景
+- 勤怠管理の入力・集計を簡略化し、現場と管理者の負担を減らすことを目的としています。
 
-* Database initialization
+## 実装した機能についての説明
+- 勤怠打刻（時間記録の登録）
+  - 画像/GIF: TODO（Gyazo/GyazoGIFで撮影して追加）
+- 管理者によるユーザー管理
+  - 画像/GIF: TODO（Gyazo/GyazoGIFで撮影して追加）
+- 管理者によるグループ/勤務時間帯/シフトパターン管理
+  - 画像/GIF: TODO（Gyazo/GyazoGIFで撮影して追加）
+- シフトの割り当て・詳細更新
+  - 画像/GIF: TODO（Gyazo/GyazoGIFで撮影して追加）
 
-* How to run the test suite
+  ## 実装予定の機能
+- 各スタッフごとの勤怠詳細一覧機能
+- シフト希望提出機能
+- 各種集計ダッシュボード機能
 
-* Services (job queues, cache servers, search engines, etc.)
+## データベース設計
 
-* Deployment instructions
+## 画面遷移図
+- 画面遷移図: TODO（画像を貼り付け）
 
-* ...
+## 開発環境
+- Ruby 3.2.0
+- Rails 7.1.6
+- MySQL（`mysql2`）
