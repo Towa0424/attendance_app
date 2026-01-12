@@ -22,13 +22,17 @@ Attendance App
 
 ## 実装した機能についての説明
 - 勤怠打刻（時間記録の登録）
-  - 画像/GIF: TODO（Gyazo/GyazoGIFで撮影して追加）
+  - [![Image from Gyazo](https://i.gyazo.com/801e3a69e453a115c3f8ebe30a53927f.gif)](https://gyazo.com/801e3a69e453a115c3f8ebe30a53927f)
 - 管理者によるユーザー管理
-  - 画像/GIF: TODO（Gyazo/GyazoGIFで撮影して追加）
-- 管理者によるグループ/勤務時間帯/シフトパターン管理
-  - 画像/GIF: TODO（Gyazo/GyazoGIFで撮影して追加）
+  - [![Image from Gyazo](https://i.gyazo.com/a398f9757ad6c2e69f32664ad23aaa85.gif)](https://gyazo.com/a398f9757ad6c2e69f32664ad23aaa85)
+- 管理者によるグループ管理
+  - [![Image from Gyazo](https://i.gyazo.com/1ce194b027b8d211b352cf15f8437ee7.gif)](https://gyazo.com/1ce194b027b8d211b352cf15f8437ee7)
+- 管理者による時間ブロック管理
+  - [![Image from Gyazo](https://i.gyazo.com/1344c6cfb4c334a4a44cbe45bd064c27.gif)](https://gyazo.com/1344c6cfb4c334a4a44cbe45bd064c27)
+- 管理者によるシフトパターン管理
+  - [![Image from Gyazo](https://i.gyazo.com/1976f6af0fec6bcc3cb0e4e409efc551.gif)](https://gyazo.com/1976f6af0fec6bcc3cb0e4e409efc551)    
 - シフトの割り当て・詳細更新
-  - 画像/GIF: TODO（Gyazo/GyazoGIFで撮影して追加）
+  - [![Image from Gyazo](https://i.gyazo.com/3567d5af0af4b6022fe9400041309867.gif)](https://gyazo.com/3567d5af0af4b6022fe9400041309867)
 
   ## 実装予定の機能
 - 各スタッフごとの勤怠詳細一覧機能
