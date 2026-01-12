@@ -86,6 +86,18 @@ module Admin
           []
         end
         
+      if slots.is_a?(Array) && slots.length != ShiftPattern::SLOTS_PER_DAY
+        group = shift.group
+        range_length = group.present? ? group.work_end_slot - group.work_start_slot : nil
+        if range_length.present? && slots.length == range_length
+          normalized = Array.new(ShiftPattern::SLOTS_PER_DAY, nil)
+          slots.each_with_index do |val, idx|
+            normalized[group.work_start_slot + idx] = val
+          end
+          slots = normalized
+        end
+      end
+
       unless slots.is_a?(Array) && slots.length == ShiftPattern::SLOTS_PER_DAY
         render json: { ok: false, error: "スロットが不正です" }, status: :unprocessable_entity
         return

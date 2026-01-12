@@ -1289,18 +1289,20 @@ button[disabled]{
 
 .shiftDayGrid{
   display:grid;
-  grid-template-columns: 260px 220px 1fr;
+  grid-template-columns: 220px 180px 1fr;
   align-items:start;
 }
 
 .shiftDayGrid__nameCol{
   border-right: 1px solid rgba(17,24,39,.08);
   background: rgba(255,255,255,.96);
+  min-width: 0;
 }
 
 .shiftDayGrid__patternCol{
   border-right: 1px solid rgba(17,24,39,.08);
   background: rgba(255,255,255,.96);
+  min-width: 0;
 }
 
 .shiftDayGrid__nameHead{
@@ -1335,6 +1337,11 @@ button[disabled]{
   align-items:center;
   padding: 0 14px;
   border-bottom: 1px solid rgba(17,24,39,.06);
+}
+
+.shiftDayPatternSelect{
+  width: 100%;
+  min-width: 0;
 }
 
 .shiftDayGrid__ganttCol{
