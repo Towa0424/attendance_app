@@ -1357,7 +1357,7 @@ button[disabled]{
 
 .shiftDayCanvas{
   width: calc(var(--slots) * var(--slot-w));
-  min-width: 720px;
+  min-width: calc(var(--slots) * var(--slot-w));
 }
 
 .shiftDayHours{

@@ -77,6 +77,12 @@ module Admin
         case params[:slots]
         when Array
           params[:slots]
+        when String
+          begin
+            JSON.parse(params[:slots])
+          rescue JSON::ParserError
+            []
+          end  
         when ActionController::Parameters
           params[:slots]
             .to_unsafe_h
@@ -87,9 +93,15 @@ module Admin
         end
         
       if slots.is_a?(Array) && slots.length != ShiftPattern::SLOTS_PER_DAY
-        group = shift.group
+        group = shift.group || user.group
         range_length = group.present? ? group.work_end_slot - group.work_start_slot : nil
-        if range_length.present? && slots.length == range_length
+                normalized_length = range_length.present? ? range_length : nil
+
+        if normalized_length.present? && slots.length == normalized_length + 1
+          slots = slots.first(normalized_length)
+        end
+
+        if normalized_length.present? && slots.length == normalized_length
           normalized = Array.new(ShiftPattern::SLOTS_PER_DAY, nil)
           slots.each_with_index do |val, idx|
             normalized[group.work_start_slot + idx] = val
