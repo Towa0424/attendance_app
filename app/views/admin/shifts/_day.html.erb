@@ -65,6 +65,27 @@
     <% end %>
   </div>
 
+  <div class="shiftDayGrid__patternCol">
+    <div class="shiftDayGrid__patternHead">パターン</div>
+    <% @users.each do |u| %>
+      <% shift = @shifts_by_user[u.id] %>
+      <div class="shiftDayGrid__patternCell">
+        <select
+          class="select select--sm shiftDayPatternSelect"
+          data-shift-day-pattern-select="1"
+          data-user-id="<%= u.id %>"
+          data-work-date="<%= @date.iso8601 %>">
+          <option value="">未設定</option>
+          <% @shift_patterns.each do |sp| %>
+            <option value="<%= sp.id %>" <%= "selected" if shift&.shift_pattern_id == sp.id %>>
+              <%= sp.name %>
+            </option>
+          <% end %>
+        </select>
+      </div>
+    <% end %>
+  </div>
+
   <div class="shiftDayGrid__ganttCol">
     <!-- 横スクロールはここだけ -->
     <div class="shiftDayScroll">
@@ -113,26 +134,5 @@
         <% end %>
       </div>
     </div>
-  </div>
-
-  <div class="shiftDayGrid__patternCol">
-    <div class="shiftDayGrid__patternHead">パターン</div>
-    <% @users.each do |u| %>
-      <% shift = @shifts_by_user[u.id] %>
-      <div class="shiftDayGrid__patternCell">
-        <select
-          class="select select--sm shiftDayPatternSelect"
-          data-shift-day-pattern-select="1"
-          data-user-id="<%= u.id %>"
-          data-work-date="<%= @date.iso8601 %>">
-          <option value="">未設定</option>
-          <% @shift_patterns.each do |sp| %>
-            <option value="<%= sp.id %>" <%= "selected" if shift&.shift_pattern_id == sp.id %>>
-              <%= sp.name %>
-            </option>
-          <% end %>
-        </select>
-      </div>
-    <% end %>
   </div>
 </div>

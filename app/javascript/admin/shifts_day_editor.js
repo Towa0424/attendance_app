@@ -170,6 +170,8 @@
         if (!res.ok || !data.ok) {
           const msg = data?.error || "更新に失敗しました";
           alert(msg);
+        } else {
+          lane.dataset.slots = JSON.stringify(state.slots);
         }
       } catch (e) {
         alert("通信に失敗しました");

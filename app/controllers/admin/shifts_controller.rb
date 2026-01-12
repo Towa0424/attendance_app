@@ -44,10 +44,14 @@ module Admin
         return
       end
 
+      shift = nil
+
       Shift.transaction do
         shift = Shift.find_or_initialize_by(user_id: user.id, work_date: work_date)
         shift.apply_pattern!(pattern)
       end
+
+      shift.reload
 
       render json: { ok: true, shift_pattern_id: pattern.id, slots: shift.slots_array }
     rescue ArgumentError
@@ -69,7 +73,19 @@ module Admin
         return
       end
 
-      slots = params[:slots]
+      slots =
+        case params[:slots]
+        when Array
+          params[:slots]
+        when ActionController::Parameters
+          params[:slots]
+            .to_unsafe_h
+            .sort_by { |k, _| k.to_i }
+            .map { |_, v| v }
+        else
+          []
+        end
+        
       unless slots.is_a?(Array) && slots.length == ShiftPattern::SLOTS_PER_DAY
         render json: { ok: false, error: "スロットが不正です" }, status: :unprocessable_entity
         return

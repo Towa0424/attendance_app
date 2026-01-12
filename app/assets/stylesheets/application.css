@@ -1289,7 +1289,7 @@ button[disabled]{
 
 .shiftDayGrid{
   display:grid;
-  grid-template-columns: 260px 1fr 220px;
+  grid-template-columns: 260px 220px 1fr;
   align-items:start;
 }
 
@@ -1299,7 +1299,7 @@ button[disabled]{
 }
 
 .shiftDayGrid__patternCol{
-  border-left: 1px solid rgba(17,24,39,.08);
+  border-right: 1px solid rgba(17,24,39,.08);
   background: rgba(255,255,255,.96);
 }
 
@@ -1339,10 +1339,13 @@ button[disabled]{
 
 .shiftDayGrid__ganttCol{
   background: rgba(255,255,255,.96);
+  min-width: 0;
 }
 
 .shiftDayScroll{
   overflow-x:auto;
+  overflow-y:hidden;
+  padding-bottom: 8px;
 }
 
 .shiftDayCanvas{
