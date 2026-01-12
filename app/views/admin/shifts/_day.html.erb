@@ -23,7 +23,36 @@
   </div>
 </div>
 
-<div class="shiftDayGrid" style="--slot-w:18px; --slots:<%= (@range_end - @range_start) %>;">
+<div class="shiftDayTools">
+  <% if @time_blocks.present? %>
+    <div class="spLegend" data-shift-day-legend="1">
+      <% @time_blocks.each do |tb| %>
+        <button
+          type="button"
+          class="spLegend__item"
+          data-time-block-id="<%= tb.id %>"
+          data-time-block-color="<%= tb.color_code %>">
+          <span class="spLegend__dot" style="--c:<%= tb.color_code %>"></span>
+          <span><%= tb.name %></span>
+        </button>
+      <% end %>
+    </div>
+  <% else %>
+    <div class="muted">時間ブロックがありません。</div>
+  <% end %>
+
+  <div class="spTools">
+    <button type="button" class="btn btn--ghost btn--sm" data-shift-day-eraser="1">消しゴム</button>
+  </div>
+</div>
+
+<div class="shiftDayGrid"
+     data-shift-day-editor="1"
+     data-assign-url="<%= assign_admin_shifts_path %>"
+     data-update-url="<%= update_details_admin_shifts_path %>"
+     data-range-start="<%= @range_start %>"
+     data-range-end="<%= @range_end %>"
+     style="--slot-w:18px; --slots:<%= (@range_end - @range_start) %>;">
   <div class="shiftDayGrid__nameCol">
     <div class="shiftDayGrid__nameHead">氏名</div>
     <% @users.each do |u| %>
@@ -56,13 +85,14 @@
         <!-- Lanes -->
         <% @users.each do |u| %>
           <% shift = @shifts_by_user[u.id] %>
-          <% blocks = [] %>
-          <% if shift.present? %>
-            <% slots  = shift.slots_array %>
-            <% blocks = ShiftPattern.blocks_from_slots(slots, range_start: @range_start, range_end: @range_end) %>
-          <% end %>
+          <% slots = shift.present? ? shift.slots_array : Array.new(ShiftPattern::SLOTS_PER_DAY, nil) %>
+          <% blocks = ShiftPattern.blocks_from_slots(slots, range_start: @range_start, range_end: @range_end) %>
 
-          <div class="shiftDayLane">
+          <div class="shiftDayLane <%= 'is-disabled' if shift.blank? %>"
+               data-shift-day-lane="1"
+               data-user-id="<%= u.id %>"
+               data-work-date="<%= @date.iso8601 %>"
+               data-slots="<%= json_escape(slots.to_json) %>">
             <% blocks.each do |b| %>
               <% tb = @time_block_map[b[:time_block_id]] %>
               <% next if tb.nil? %>
@@ -72,9 +102,9 @@
                    title="<%= tb.name %>"></div>
             <% end %>
 
-            <% if shift.blank? %>
-              <div class="shiftDayLane__hint">（未設定）</div>
-            <% end %>
+            <div class="shiftDayLane__hint" <%= "style=\"display:none;\"" if blocks.present? %>>
+              （未設定）
+            </div>
           </div>
         <% end %>
 
@@ -83,5 +113,26 @@
         <% end %>
       </div>
     </div>
+  </div>
+
+  <div class="shiftDayGrid__patternCol">
+    <div class="shiftDayGrid__patternHead">パターン</div>
+    <% @users.each do |u| %>
+      <% shift = @shifts_by_user[u.id] %>
+      <div class="shiftDayGrid__patternCell">
+        <select
+          class="select select--sm shiftDayPatternSelect"
+          data-shift-day-pattern-select="1"
+          data-user-id="<%= u.id %>"
+          data-work-date="<%= @date.iso8601 %>">
+          <option value="">未設定</option>
+          <% @shift_patterns.each do |sp| %>
+            <option value="<%= sp.id %>" <%= "selected" if shift&.shift_pattern_id == sp.id %>>
+              <%= sp.name %>
+            </option>
+          <% end %>
+        </select>
+      </div>
+    <% end %>
   </div>
 </div>

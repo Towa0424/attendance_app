@@ -16,6 +16,7 @@ Rails.application.routes.draw do
     resources :shifts, only: %i[index] do
       collection do
         patch :assign
+        patch :update_details
       end
     end
   end

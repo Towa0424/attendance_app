@@ -138,5 +138,16 @@ module Admin
         @group_ranges[g.id] ||= { start: ShiftPattern::DEFAULT_START_SLOT, end: ShiftPattern::DEFAULT_END_SLOT }
       end
     end
+    def details
+      sp = ShiftPattern.find(params[:id])
+      details = sp.shift_pattern_details.map do |d|
+        {
+          start: d.start_slot,
+          end: d.end_slot,
+          kind: d.kind
+        }
+      end
+      render json: details
+    end
   end
 end

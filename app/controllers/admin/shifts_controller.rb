@@ -6,6 +6,7 @@ module Admin
       @view_mode = params[:view].in?(%w[month day]) ? params[:view] : "month"
 
       if @group.nil?
+        # グループ未作成など
         @users = []
         @shift_patterns = []
         return
@@ -22,23 +23,24 @@ module Admin
     end
 
     # 月別：セルのプルダウン変更で呼ばれる
-    # params: shift[user_id], shift[work_date](YYYY-MM-DD), shift[shift_pattern_id](optional)
+    # params: user_id, work_date(YYYY-MM-DD), shift_pattern_id(optional)
     def assign
-      sp = shift_assign_params
-      user = User.find(sp[:user_id])
-      work_date = Date.iso8601(sp[:work_date])
+      user = User.find(params[:user_id])
+      work_date = Date.iso8601(params[:work_date])
 
       # 未選択（空）なら、その日のシフト自体を削除（= 未設定）
-      if sp[:shift_pattern_id].blank?
+      if params[:shift_pattern_id].blank?
         Shift.where(user_id: user.id, work_date: work_date).delete_all
-        render json: { ok: true, removed: true }
+        render json: { ok: true, removed: true, slots: Array.new(ShiftPattern::SLOTS_PER_DAY, nil) }
         return
       end
 
-      pattern = ShiftPattern.find(sp[:shift_pattern_id])
+      pattern = ShiftPattern.find(params[:shift_pattern_id])
 
+      # 安全：所属グループが一致しない更新は弾く（要件「出てくるパターンは所属グループに依存」前提）
       if user.group_id != pattern.group_id
-        render json: { ok: false, error: "選択したパターンはユーザーの所属グループと一致しません" }, status: :unprocessable_entity
+        render json: { ok: false, error: "所属グループと一致しないパターンは設定できません" },
+               status: :unprocessable_entity
         return
       end
 
@@ -47,26 +49,64 @@ module Admin
         shift.apply_pattern!(pattern)
       end
 
-      render json: { ok: true, shift_pattern_id: pattern.id }
-    rescue ActionController::ParameterMissing, ArgumentError
-      render json: { ok: false, error: "パラメータが不正です" }, status: :unprocessable_entity
-    rescue ActiveRecord::RecordNotFound
-      render json: { ok: false, error: "対象が見つかりません" }, status: :not_found
+      render json: { ok: true, shift_pattern_id: pattern.id, slots: shift.slots_array }
+    rescue ArgumentError
+      render json: { ok: false, error: "日付が不正です" }, status: :unprocessable_entity
     rescue ActiveRecord::RecordInvalid => e
-      render json: { ok: false, error: e.record.errors.full_messages.join(", ") }, status: :unprocessable_entity
+      render json: { ok: false, error: e.record.errors.full_messages.join(", ") },
+             status: :unprocessable_entity
+    end
+
+    # 日別：ガント編集内容の保存
+    # params: user_id, work_date(YYYY-MM-DD), slots(array[96])
+    def update_details
+      user = User.find(params[:user_id])
+      work_date = Date.iso8601(params[:work_date])
+
+      shift = Shift.find_by(user_id: user.id, work_date: work_date)
+      unless shift
+        render json: { ok: false, error: "シフトが見つかりません" }, status: :not_found
+        return
+      end
+
+      slots = params[:slots]
+      unless slots.is_a?(Array) && slots.length == ShiftPattern::SLOTS_PER_DAY
+        render json: { ok: false, error: "スロットが不正です" }, status: :unprocessable_entity
+        return
+      end
+
+      now = Time.current
+      rows = []
+
+      slots.each_with_index do |tb_id, idx|
+        next if tb_id.blank?
+
+        rows << {
+          shift_id: shift.id,
+          slot_index: idx,
+          time_block_id: tb_id.to_i,
+          created_at: now,
+          updated_at: now
+        }
+      end
+
+      ShiftDetail.transaction do
+        shift.shift_details.delete_all
+        ShiftDetail.insert_all(rows) if rows.present?
+      end
+
+      render json: { ok: true }
+    rescue ArgumentError
+      render json: { ok: false, error: "日付が不正です" }, status: :unprocessable_entity
     end
 
     private
-
-    def shift_assign_params
-      params.require(:shift).permit(:user_id, :work_date, :shift_pattern_id)
-    end
 
     def set_groups_and_group!
       @groups = Group.order(:id)
       @group =
         if params[:group_id].present?
-          Group.find_by(id: params[:group_id])
+          @groups.find { |g| g.id == params[:group_id].to_i }
         else
           @groups.first
         end
@@ -74,30 +114,50 @@ module Admin
     end
 
     def build_month_view
-      @month = params[:month].present? ? Date.parse(params[:month]).beginning_of_month : Date.current.beginning_of_month
-      @days = (@month..@month.end_of_month).to_a
+      base =
+        if params[:month].present?
+          Date.strptime(params[:month], "%Y-%m").beginning_of_month
+        else
+          Date.current.beginning_of_month
+        end
 
-      user_ids = @users.map(&:id)
-      @shifts_map =
-        Shift.where(group_id: @group.id, user_id: user_ids, work_date: @days)
-             .select(:id, :user_id, :work_date, :shift_pattern_id)
-             .index_by { |s| [s.user_id, s.work_date] }
+      @month = base
+      @days = (@month.beginning_of_month..@month.end_of_month).to_a
+
+      shifts = Shift.where(group_id: @group.id, work_date: @days).select(:id, :user_id, :work_date, :shift_pattern_id)
+      @shifts_map = shifts.index_by { |s| [s.user_id, s.work_date] }
+    rescue ArgumentError
+      @month = Date.current.beginning_of_month
+      @days = (@month.beginning_of_month..@month.end_of_month).to_a
+      @shifts_map = {}
     end
 
     def build_day_view
-      @date = params[:date].present? ? Date.parse(params[:date]) : Date.current
+      @date =
+        if params[:date].present?
+          Date.iso8601(params[:date])
+        else
+          Date.current
+        end
 
       @range_start = @group.work_start_slot
-      @range_end = @group.work_end_slot
+      @range_end   = @group.work_end_slot
       @end_on_hour = (@range_end % 4 == 0)
 
-      user_ids = @users.map(&:id)
-      shifts =
-        Shift.where(group_id: @group.id, user_id: user_ids, work_date: @date)
-             .includes(:shift_pattern, shift_details: :time_block)
+      shifts = Shift.where(group_id: @group.id, work_date: @date)
+              .includes(:shift_pattern, shift_details: :time_block)
 
       @shifts_by_user = shifts.index_by(&:user_id)
-      @time_block_map = TimeBlock.all.index_by(&:id)
+      @time_blocks = TimeBlock.order(:id)
+      @time_block_map = @time_blocks.index_by(&:id)
+    rescue ArgumentError
+      @date = Date.current
+      @range_start = @group.work_start_slot
+      @range_end   = @group.work_end_slot
+      @end_on_hour = (@range_end % 4 == 0)
+      @shifts_by_user = {}
+      @time_blocks = TimeBlock.order(:id)
+      @time_block_map = @time_blocks.index_by(&:id)
     end
   end
 end

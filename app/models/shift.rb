@@ -2,54 +2,62 @@ class Shift < ApplicationRecord
   belongs_to :user
   belongs_to :group
   belongs_to :shift_pattern
-
   has_many :shift_details, dependent: :destroy
+  has_many :shifts, dependent: :restrict_with_error
 
   validates :work_date, presence: true
+  validates :user_id, uniqueness: { scope: :work_date }
+
   validate :group_consistency
 
-  # 日別ガント用（0..95 の time_block_id 配列）
+  # ShiftPattern と同じ配列生成（0..95）
   def slots_array
-    arr = Array.new(96)
-    shift_details.each { |d| arr[d.slot_index] = d.time_block_id }
+    arr = Array.new(ShiftPattern::SLOTS_PER_DAY, nil)
+    shift_details.each do |d|
+      arr[d.slot_index] = d.time_block_id
+    end
     arr
   end
 
-  # 選択されたシフトパターンを適用し、shift_details を再生成する
+  # パターンからその日の詳細へコピー（スナップショット化）
+  def snapshot_from_pattern!
+    return if shift_pattern.nil?
+
+    now = Time.current
+
+    # 既存を消して作り直し（最初はこの方が事故りにくい）
+    shift_details.delete_all
+
+    rows = shift_pattern.shift_pattern_details.map do |d|
+      {
+        shift_id: id,
+        slot_index: d.slot_index,
+        time_block_id: d.time_block_id,
+        created_at: now,
+        updated_at: now
+      }
+    end
+
+    ShiftDetail.insert_all(rows) if rows.present?
+  end
+
   def apply_pattern!(pattern)
     self.shift_pattern = pattern
     self.group_id = pattern.group_id
     save!
+
     snapshot_from_pattern!
-  end
-
-  # shift_pattern_details から 15分スロットを shift_details にスナップショットする
-  def snapshot_from_pattern!
-    shift_details.delete_all
-
-    now = Time.current
-    rows =
-      shift_pattern.shift_pattern_details
-                  .order(:start_slot)
-                  .flat_map do |d|
-        (d.start_slot...d.end_slot).map do |slot|
-          {
-            shift_id: id,
-            slot_index: slot,
-            time_block_id: d.time_block_id,
-            created_at: now,
-            updated_at: now
-          }
-        end
-      end
-
-    ShiftDetail.insert_all(rows) if rows.any?
+    self
   end
 
   private
 
   def group_consistency
-    return if shift_pattern.blank? || group_id.blank?
-    errors.add(:group, "がシフトパターンの所属グループと一致しません") if group_id != shift_pattern.group_id
+    return if shift_pattern.nil? || group_id.nil?
+    errors.add(:group_id, "がシフトパターンの所属グループと一致しません") if group_id != shift_pattern.group_id
+
+    if user&.group_id.present? && group_id != user.group_id
+      errors.add(:group_id, "がスタッフの所属グループと一致しません")
+    end
   end
 end
