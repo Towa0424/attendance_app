@@ -968,9 +968,7 @@ button[disabled]{
 }
 
 .shiftCell{
-  display:flex;
-  align-items:center;
-  gap: 6px;
+  display: table-cell;
 }
 
 .shiftCell__select{
