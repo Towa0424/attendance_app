@@ -1223,6 +1223,8 @@ button[disabled]{
 .shiftDayHeadWday{ font-size: 12px; color: rgba(17,24,39,.62); }
 
 .shiftCell{
+  padding: 6px 8px;
+  text-align:center;
   vertical-align: middle;
 }
 
