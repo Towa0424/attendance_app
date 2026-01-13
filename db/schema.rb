@@ -66,7 +66,7 @@ ActiveRecord::Schema[7.1].define(version: 2026_01_11_145242) do
   end
 
   create_table "time_blocks", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
-    t.string "name", null: false
+    t.string "name", limit: 191, null: false
     t.string "color_code", null: false
     t.boolean "has_cost", default: true, null: false
     t.boolean "has_sales", default: true, null: false
@@ -86,19 +86,19 @@ ActiveRecord::Schema[7.1].define(version: 2026_01_11_145242) do
   end
 
   create_table "users", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
-    t.string "email", default: "", null: false
+    t.string "email", limit: 191, default: "", null: false
     t.string "encrypted_password", default: "", null: false
     t.string "name", null: false
     t.integer "role", default: 0, null: false
     t.bigint "group_id"
-    t.string "employee_number", null: false
+    t.string "employee_number", limit: 50, null: false
     t.date "joined_on", null: false
     t.date "retired_on"
     t.integer "employment_type", default: 0, null: false
     t.integer "position", default: 2, null: false
     t.integer "salary_type", default: 0, null: false
     t.integer "salary_amount", null: false
-    t.string "reset_password_token"
+    t.string "reset_password_token", limit: 191
     t.datetime "reset_password_sent_at"
     t.datetime "remember_created_at"
     t.datetime "created_at", null: false
