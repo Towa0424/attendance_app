@@ -10,7 +10,11 @@ Attendance App
 - https://46.51.245.248
 
 ## テスト用アカウント
+### 管理アカウント
 - ID：demo@mail.com
+- PW：demo1234
+### 一般アカウント
+- ID：demo1@mail.com
 - PW：demo1234
 ## 利用方法
 - ログイン後、勤怠一覧から打刻を登録します。
