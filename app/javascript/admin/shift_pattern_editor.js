@@ -109,12 +109,21 @@
     const addBlock = (startSlot, endSlot, timeBlockId) => {
       const btn = document.querySelector(`.spLegend__item[data-time-block-id="${timeBlockId}"]`);
       const color = btn?.dataset?.timeBlockColor || "#22c55e";
+      const name = btn?.dataset?.timeBlockName || btn?.querySelector(".spLegend__name")?.textContent?.trim();
 
       const b = document.createElement("div");
       b.className = "spBlock";
       b.style.setProperty("--start", String(startSlot - displayRange.start));
       b.style.setProperty("--end", String(endSlot - displayRange.start));
       b.style.setProperty("--c", color);
+      
+        if (name) {
+        const label = document.createElement("span");
+        label.className = "spBlock__label";
+        label.textContent = name;
+        b.appendChild(label);
+      }
+
       lane.appendChild(b);
     };
 
