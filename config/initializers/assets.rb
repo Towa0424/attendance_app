@@ -10,3 +10,9 @@ Rails.application.config.assets.version = "1.0"
 # application.js, application.css, and all non-JS/CSS in the app/assets
 # folder are already added.
 # Rails.application.config.assets.precompile += %w( admin.js admin.css )
+Rails.application.config.assets.precompile += %w[
+  admin/color_pick.js
+  admin/shift_pattern_editor.js
+  admin/shifts_month_editor.js
+  admin/shifts_day_editor.js
+]
