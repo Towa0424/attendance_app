@@ -21,8 +21,11 @@
     const eraserBtn = document.querySelector('[data-shift-day-eraser="1"]');
 
     const colorMap = new Map();
+    const nameMap = new Map();
     legendButtons.forEach((btn) => {
       colorMap.set(Number(btn.dataset.timeBlockId), btn.dataset.timeBlockColor || "#22c55e");
+      const label = btn.dataset.timeBlockName || btn.textContent?.trim();
+      if (label) nameMap.set(Number(btn.dataset.timeBlockId), label);      
     });
 
     let activeTimeBlockId = null;
