@@ -1240,6 +1240,54 @@ button[disabled]{
 .shiftDayHeadNum{ font-weight: 900; }
 .shiftDayHeadWday{ font-size: 12px; color: rgba(17,24,39,.62); }
 
+.staffShiftTable{
+  width: 100%;
+}
+
+.staffShiftDate{
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.staffShiftDate.is-weekend{
+  background: rgba(17,24,39,.02);
+}
+
+.staffShiftDate__day{
+  font-size: 14px;
+}
+
+.staffShiftDate__wday{
+  font-size: 12px;
+}
+
+.staffShiftPattern{
+  display: grid;
+  gap: 8px;
+}
+
+.staffShiftPattern__name{
+  font-weight: 900;
+}
+
+.staffShiftRecords{
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 6px;
+}
+
+.staffShiftRecord{
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.staffShiftRecord__time{
+  font-weight: 700;
+}
+
 .shiftCell{
   vertical-align: middle;
 }

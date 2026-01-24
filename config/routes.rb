@@ -6,6 +6,7 @@ Rails.application.routes.draw do
   end
 
   resources :time_records, only: [:index, :create]
+  resources :shifts, only: [:index]
 
   namespace :admin do
     resources :users, only: %i[index new create edit update]

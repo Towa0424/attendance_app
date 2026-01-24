@@ -1,0 +1,106 @@
+<div class="page">
+  <div class="pageHead">
+    <h1 class="pageHead__title">シフト一覧</h1>
+
+    <div class="pageHead__actions">
+      <%= link_to "打刻", time_records_path, class: "btn btn--ghost" %>
+      <%= button_to "ログアウト", destroy_user_session_path, method: :delete, class: "btn btn--ghost" %>
+    </div>
+  </div>
+
+  <% if alert.present? %>
+    <div class="alert alert--error"><%= alert %></div>
+  <% end %>
+
+  <section class="card">
+    <div class="shiftMonthHead">
+      <div class="shiftMonthHead__title">
+        <span class="tag"><%= @month.strftime("%Y年%m月") %></span>
+      </div>
+
+      <div class="shiftMonthHead__nav">
+        <%= link_to "前月",
+              shifts_path(month: @month.prev_month.strftime("%Y-%m")),
+              class: "btn btn--ghost btn--sm" %>
+
+        <%= link_to "今月",
+              shifts_path(month: Date.current.strftime("%Y-%m")),
+              class: "btn btn--ghost btn--sm" %>
+
+        <%= link_to "翌月",
+              shifts_path(month: @month.next_month.strftime("%Y-%m")),
+              class: "btn btn--ghost btn--sm" %>
+      </div>
+    </div>
+
+    <div class="card__body card__body--flush">
+      <table class="table staffShiftTable">
+        <colgroup>
+          <col style="width: 160px;">
+          <col>
+          <col style="width: 260px;">
+        </colgroup>
+        <thead>
+          <tr>
+            <th>日付</th>
+            <th>シフト</th>
+            <th>打刻</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @days.each do |day| %>
+            <% wday = %w[日 月 火 水 木 金 土][day.wday] %>
+            <% shift = @shift_map[day] %>
+            <% records = @time_records_map[day] || [] %>
+            <% pattern = shift&.shift_pattern %>
+
+            <tr>
+              <td class="staffShiftDate <%= 'is-weekend' if day.saturday? || day.sunday? %>">
+                <div class="staffShiftDate__day"><%= day.strftime("%m/%d") %></div>
+                <div class="staffShiftDate__wday muted"><%= wday %></div>
+              </td>
+              <td>
+                <% if pattern.present? %>
+                  <div class="staffShiftPattern">
+                    <div class="staffShiftPattern__name"><%= pattern.name %></div>
+                    <% usage = pattern.time_block_usage %>
+                    <% if usage.present? %>
+                      <div class="spPills" aria-label="シフトの時間ブロック">
+                        <% usage.each do |u| %>
+                          <% tb = u[:time_block] %>
+                          <span class="spPill" title="<%= tb.name %>（合計 <%= ShiftPattern.minutes_to_hhmm(u[:minutes]) %>）">
+                            <span class="spPill__dot" style="--c:<%= tb.color_code %>"></span>
+                            <span class="spPill__name"><%= tb.name %></span>
+                            <span class="spPill__time"><%= ShiftPattern.minutes_to_hhmm(u[:minutes]) %></span>
+                          </span>
+                        <% end %>
+                      </div>
+                    <% else %>
+                      <div class="muted">（未設定）</div>
+                    <% end %>
+                  </div>
+                <% else %>
+                  <span class="muted">未設定</span>
+                <% end %>
+              </td>
+              <td>
+                <% if records.present? %>
+                  <ul class="staffShiftRecords">
+                    <% records.each do |record| %>
+                      <li class="staffShiftRecord">
+                        <span class="tag"><%= event_type_label(record.event_type) %></span>
+                        <span class="staffShiftRecord__time"><%= record.recorded_at.in_time_zone.strftime("%H:%M") %></span>
+                      </li>
+                    <% end %>
+                  </ul>
+                <% else %>
+                  <span class="muted">打刻なし</span>
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</div>
