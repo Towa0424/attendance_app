@@ -81,4 +81,17 @@ class ShiftPattern < ApplicationRecord
     mm = m % 60
     format("%d:%02d", h, mm)
   end
+
+  def shift_time_range
+    return nil if shift_pattern_details.blank?
+
+    min_slot = shift_pattern_details.minimum(:slot_index)
+    max_slot = shift_pattern_details.maximum(:slot_index)
+    return nil if min_slot.nil? || max_slot.nil?
+
+    {
+      start: self.class.slot_to_hhmm(min_slot),
+      end: self.class.slot_to_hhmm(max_slot + 1)
+    }
+  end
 end

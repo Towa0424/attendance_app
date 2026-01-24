@@ -63,17 +63,17 @@
                 <% if pattern.present? %>
                   <div class="staffShiftPattern">
                     <div class="staffShiftPattern__name"><%= pattern.name %></div>
-                    <% usage = pattern.time_block_usage %>
-                    <% if usage.present? %>
-                      <div class="spPills" aria-label="シフトの時間ブロック">
-                        <% usage.each do |u| %>
-                          <% tb = u[:time_block] %>
-                          <span class="spPill" title="<%= tb.name %>（合計 <%= ShiftPattern.minutes_to_hhmm(u[:minutes]) %>）">
-                            <span class="spPill__dot" style="--c:<%= tb.color_code %>"></span>
-                            <span class="spPill__name"><%= tb.name %></span>
-                            <span class="spPill__time"><%= ShiftPattern.minutes_to_hhmm(u[:minutes]) %></span>
-                          </span>
-                        <% end %>
+                    <% time_range = pattern.shift_time_range %>
+                    <% if time_range.present? %>
+                      <div class="staffShiftPattern__time" aria-label="出勤・退勤時間">
+                        <div class="staffShiftPattern__timeItem">
+                          <span class="staffShiftPattern__timeLabel">出勤</span>
+                          <span class="staffShiftPattern__timeValue"><%= time_range[:start] %></span>
+                        </div>
+                        <div class="staffShiftPattern__timeItem">
+                          <span class="staffShiftPattern__timeLabel">退勤</span>
+                          <span class="staffShiftPattern__timeValue"><%= time_range[:end] %></span>
+                        </div>
                       </div>
                     <% else %>
                       <div class="muted">（未設定）</div>

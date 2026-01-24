@@ -1270,6 +1270,27 @@ button[disabled]{
   font-weight: 900;
 }
 
+.staffShiftPattern__time{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  font-size: 13px;
+}
+
+.staffShiftPattern__timeItem{
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.staffShiftPattern__timeLabel{
+  color: rgba(17,24,39,.65);
+}
+
+.staffShiftPattern__timeValue{
+  font-weight: 700;
+}
+
 .staffShiftRecords{
   list-style: none;
   margin: 0;
