@@ -1,0 +1,83 @@
+<div class="page">
+  <div class="pageHead">
+    <h1 class="pageHead__title">希望休提出</h1>
+    <div class="pageHead__actions">
+      <%= link_to "打刻", time_records_path, class: "btn btn--ghost" %>
+      <%= link_to "シフト一覧", shifts_path, class: "btn btn--ghost" %>
+    </div>
+  </div>
+
+  <section class="card">
+    <div class="card__body">
+      <div class="toCalHead">
+        <div class="toCalHead__month">
+          <span class="tag"><%= @month.strftime("%Y年%m月") %></span>
+          <span class="muted" style="font-size:12px; margin-left:8px;">翌月分の希望休を提出できます</span>
+        </div>
+
+        <% if @locked %>
+          <div class="toCalHead__lock toLock toLock--locked">
+            <span class="toLock__icon">&#128274;</span>
+            <span class="toLock__text">ロック中（変更不可）</span>
+          </div>
+        <% end %>
+      </div>
+
+      <div class="toCalLegend">
+        <span class="toCalLegend__item">
+          <span class="toCalLegend__dot toCalLegend__dot--preferred"></span>
+          希望
+        </span>
+        <span class="toCalLegend__item">
+          <span class="toCalLegend__dot toCalLegend__dot--fixed"></span>
+          固定休
+        </span>
+        <span class="toCalLegend__item">
+          <span class="toCalLegend__dot toCalLegend__dot--none"></span>
+          未設定
+        </span>
+      </div>
+
+      <div class="toCal" id="js-time-off-calendar"
+           data-toggle-url="<%= toggle_time_off_requests_path %>"
+           data-locked="<%= @locked %>">
+
+        <div class="toCal__header">
+          <% %w[日 月 火 水 木 金 土].each_with_index do |w, i| %>
+            <div class="toCal__wday <%= 'is-sun' if i == 0 %> <%= 'is-sat' if i == 6 %>"><%= w %></div>
+          <% end %>
+        </div>
+
+        <div class="toCal__body">
+          <%# 月初の曜日まで空白セル %>
+          <% @month.wday.times do %>
+            <div class="toCal__cell toCal__cell--blank"></div>
+          <% end %>
+
+          <% @days.each do |d| %>
+            <% req = @requests[d] %>
+            <% rtype = req&.request_type %>
+            <div class="toCal__cell <%= "is-#{rtype}" if rtype %>"
+                 data-date="<%= d.iso8601 %>"
+                 data-request-type="<%= rtype || '' %>">
+              <div class="toCal__dayNum <%= 'is-sun' if d.sunday? %> <%= 'is-sat' if d.saturday? %>"><%= d.day %></div>
+              <div class="toCal__mark">
+                <% if rtype == "preferred" %>
+                  <span class="toCal__badge toCal__badge--preferred">希望</span>
+                <% elsif rtype == "fixed" %>
+                  <span class="toCal__badge toCal__badge--fixed">固定休</span>
+                <% end %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+
+      <% if @locked %>
+        <p class="hint">※管理者により希望休がロックされています。変更はできません。</p>
+      <% else %>
+        <p class="hint">※日付をクリックして「希望」または「固定休」を選択してください。再度クリックで変更・取り消しができます。</p>
+      <% end %>
+    </div>
+  </section>
+</div>
