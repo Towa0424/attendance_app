@@ -20,5 +20,11 @@ Rails.application.routes.draw do
         patch :update_details
       end
     end
+
+    resources :time_off_locks, only: [] do
+      collection do
+        patch :toggle
+      end
+    end
   end
 end
