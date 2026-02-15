@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2026_01_11_145242) do
+ActiveRecord::Schema[7.1].define(version: 2026_02_15_000002) do
   create_table "groups", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "name", null: false
     t.integer "work_start_slot", null: false
@@ -65,6 +65,16 @@ ActiveRecord::Schema[7.1].define(version: 2026_01_11_145242) do
     t.index ["user_id"], name: "index_shifts_on_user_id"
   end
 
+  create_table "staff_time_off_requests", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.date "target_date", null: false
+    t.integer "request_type", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id", "target_date"], name: "idx_time_off_user_date", unique: true
+    t.index ["user_id"], name: "index_staff_time_off_requests_on_user_id"
+  end
+
   create_table "time_blocks", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "name", limit: 191, null: false
     t.string "color_code", null: false
@@ -73,6 +83,16 @@ ActiveRecord::Schema[7.1].define(version: 2026_01_11_145242) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["name"], name: "index_time_blocks_on_name", unique: true
+  end
+
+  create_table "time_off_locks", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.bigint "group_id", null: false
+    t.date "target_month", null: false
+    t.boolean "locked", default: false, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["group_id", "target_month"], name: "idx_time_off_lock_group_month", unique: true
+    t.index ["group_id"], name: "index_time_off_locks_on_group_id"
   end
 
   create_table "time_records", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
@@ -118,6 +138,8 @@ ActiveRecord::Schema[7.1].define(version: 2026_01_11_145242) do
   add_foreign_key "shifts", "groups"
   add_foreign_key "shifts", "shift_patterns"
   add_foreign_key "shifts", "users"
+  add_foreign_key "staff_time_off_requests", "users"
+  add_foreign_key "time_off_locks", "groups"
   add_foreign_key "time_records", "users"
   add_foreign_key "users", "groups"
 end
