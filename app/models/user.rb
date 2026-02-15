@@ -17,5 +17,4 @@ class User < ApplicationRecord
   belongs_to :group, optional: true
   has_many :time_records, dependent: :destroy
   has_many :shifts, dependent: :destroy
-  has_many :staff_time_off_requests, dependent: :destroy
 end

@@ -45,25 +45,6 @@
       <% if @group.nil? %>
         <p class="hint">グループが未作成です。先にグループを作成してください。</p>
       <% end %>
-
-      <% if @group.present? && @view_mode == "month" %>
-        <div class="shiftLockBar">
-          <div class="shiftLockBar__info">
-            <span class="shiftLockBar__label">希望休ロック</span>
-            <span class="muted" style="font-size:12px;">ロックすると、スタッフは<%= @month&.strftime("%Y年%m月") %>の希望休を変更できなくなります</span>
-          </div>
-          <button
-            class="btn btn--sm shiftLockBtn <%= @time_off_locked ? 'shiftLockBtn--locked' : '' %>"
-            id="js-time-off-lock-btn"
-            data-lock-url="<%= toggle_admin_time_off_locks_path %>"
-            data-group-id="<%= @group_id %>"
-            data-month="<%= @month&.strftime('%Y-%m') %>"
-            data-locked="<%= @time_off_locked %>">
-            <span class="shiftLockBtn__icon"><%= @time_off_locked ? "&#128274;" : "&#128275;" %></span>
-            <span class="shiftLockBtn__text"><%= @time_off_locked ? "ロック中" : "未ロック" %></span>
-          </button>
-        </div>
-      <% end %>
     </div>
 
     <div class="card__body card__body--flush">
