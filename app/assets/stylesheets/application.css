@@ -1532,3 +1532,280 @@ button[disabled]{
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+/* =========================================================
+   Time Off Requests - Staff Calendar
+   ========================================================= */
+
+.toCalHead{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.toCalHead__month{
+  display:flex;
+  align-items:center;
+}
+
+.toCalLegend{
+  display:flex;
+  gap: 16px;
+  align-items:center;
+  margin-bottom: 14px;
+  font-size: 13px;
+  font-weight: 800;
+  color: rgba(17,24,39,.78);
+}
+
+.toCalLegend__item{
+  display:inline-flex;
+  align-items:center;
+  gap: 6px;
+}
+
+.toCalLegend__dot{
+  width: 12px;
+  height: 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(17,24,39,.14);
+}
+
+.toCalLegend__dot--preferred{ background: rgba(251,191,36,.60); }
+.toCalLegend__dot--fixed{ background: rgba(239,68,68,.45); }
+.toCalLegend__dot--none{ background: rgba(17,24,39,.06); }
+
+/* Calendar grid */
+.toCal__header{
+  display:grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0;
+  border-bottom: 2px solid rgba(17,24,39,.12);
+}
+
+.toCal__wday{
+  padding: 8px 4px;
+  text-align:center;
+  font-size: 12px;
+  font-weight: 900;
+  color: rgba(17,24,39,.62);
+}
+
+.toCal__wday.is-sun{ color: rgba(239,68,68,.85); }
+.toCal__wday.is-sat{ color: rgba(59,130,246,.85); }
+
+.toCal__body{
+  display:grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0;
+}
+
+.toCal__cell{
+  position: relative;
+  min-height: 72px;
+  padding: 6px;
+  border: 1px solid rgba(17,24,39,.06);
+  transition: background .12s ease, box-shadow .12s ease;
+}
+
+.toCal__cell:hover:not(.toCal__cell--blank){
+  background: rgba(46,164,79,.04);
+  box-shadow: inset 0 0 0 2px rgba(46,164,79,.15);
+}
+
+.toCal__cell--blank{
+  cursor: default;
+}
+
+.toCal__cell.is-preferred{
+  background: rgba(251,191,36,.10);
+}
+
+.toCal__cell.is-fixed{
+  background: rgba(239,68,68,.08);
+}
+
+.toCal__cell.is-loading{
+  opacity: .55;
+  pointer-events: none;
+}
+
+.toCal__dayNum{
+  font-size: 14px;
+  font-weight: 900;
+  color: rgba(17,24,39,.82);
+}
+
+.toCal__dayNum.is-sun{ color: rgba(239,68,68,.85); }
+.toCal__dayNum.is-sat{ color: rgba(59,130,246,.85); }
+
+.toCal__mark{
+  margin-top: 4px;
+}
+
+.toCal__badge{
+  display:inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.toCal__badge--preferred{
+  background: rgba(251,191,36,.25);
+  border: 1px solid rgba(251,191,36,.50);
+  color: rgba(146,100,0,.92);
+}
+
+.toCal__badge--fixed{
+  background: rgba(239,68,68,.15);
+  border: 1px solid rgba(239,68,68,.40);
+  color: rgba(185,28,28,.92);
+}
+
+/* Type selector popup */
+.toPopup{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 100;
+  display:flex;
+  gap: 6px;
+  padding: 8px;
+  background: rgba(255,255,255,.98);
+  border: 1px solid rgba(17,24,39,.14);
+  border-radius: 14px;
+  box-shadow: 0 14px 36px rgba(17,24,39,.16);
+  white-space: nowrap;
+}
+
+.toPopup__btn{
+  appearance: none;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(17,24,39,.14);
+  background: #fff;
+  cursor: pointer;
+  font-weight: 900;
+  font-size: 12px;
+  transition: background .1s ease, border-color .1s ease;
+}
+
+.toPopup__btn:hover{
+  border-color: rgba(17,24,39,.22);
+}
+
+.toPopup__btn--preferred:hover{
+  background: rgba(251,191,36,.15);
+  border-color: rgba(251,191,36,.50);
+}
+
+.toPopup__btn--fixed:hover{
+  background: rgba(239,68,68,.10);
+  border-color: rgba(239,68,68,.40);
+}
+
+.toPopup__btn--remove:hover{
+  background: rgba(17,24,39,.06);
+}
+
+.toPopup__btn.is-current{
+  background: var(--primary-soft);
+  border-color: rgba(46,164,79,.45);
+}
+
+/* Lock status badge */
+.toLock{
+  display:inline-flex;
+  align-items:center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.toLock--locked{
+  background: rgba(239,68,68,.10);
+  border: 1px solid rgba(239,68,68,.30);
+  color: rgba(185,28,28,.92);
+}
+
+/* =========================================================
+   Time Off - Shift Management Integration (Admin Month View)
+   ========================================================= */
+
+/* Cell background colors for time-off requests */
+.shiftCell--toPreferred{
+  background: rgba(251,191,36,.10) !important;
+}
+
+.shiftCell--toFixed{
+  background: rgba(239,68,68,.08) !important;
+}
+
+/* Small dot indicator in shift cells */
+.shiftCell__toDot{
+  display: block;
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  margin: 0 auto 4px;
+}
+
+.shiftCell__toDot--preferred{
+  background: rgba(251,191,36,.80);
+  border: 1px solid rgba(200,150,0,.50);
+}
+
+.shiftCell__toDot--fixed{
+  background: rgba(239,68,68,.70);
+  border: 1px solid rgba(185,28,28,.40);
+}
+
+/* Lock bar in shift management */
+.shiftLockBar{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap: 12px;
+  margin-top: 12px;
+  padding: 10px 14px;
+  border: 1px solid rgba(17,24,39,.08);
+  border-radius: 12px;
+  background: rgba(46,164,79,.03);
+  flex-wrap: wrap;
+}
+
+.shiftLockBar__info{
+  display:flex;
+  align-items:center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.shiftLockBar__label{
+  font-size: 13px;
+  font-weight: 900;
+  color: rgba(17,24,39,.82);
+}
+
+.shiftLockBtn{
+  display:inline-flex;
+  align-items:center;
+  gap: 6px;
+}
+
+.shiftLockBtn--locked{
+  background: rgba(239,68,68,.10);
+  border-color: rgba(239,68,68,.35);
+  color: rgba(185,28,28,.92);
+}
+
+.shiftLockBtn--locked:hover{
+  background: rgba(239,68,68,.18);
+}
