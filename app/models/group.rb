@@ -3,7 +3,6 @@ class Group < ApplicationRecord
   has_many :shift_patterns, dependent: :restrict_with_error
 
   has_many :shifts, dependent: :restrict_with_error
-  has_many :time_off_locks, dependent: :destroy
 
   validates :name, presence: true, length: { maximum: 50 }, uniqueness: true
 end
