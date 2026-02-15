@@ -1739,39 +1739,6 @@ button[disabled]{
    Time Off - Shift Management Integration (Admin Month View)
    ========================================================= */
 
-/* Time-off legend in shift management */
-.shiftToLegend{
-  display:flex;
-  align-items:center;
-  gap: 16px;
-  padding: 8px 14px;
-  font-size: 12px;
-  color: rgba(17,24,39,.70);
-}
-
-.shiftToLegend__item{
-  display:inline-flex;
-  align-items:center;
-  gap: 6px;
-}
-
-.shiftToLegend__dot{
-  display:inline-block;
-  width: 10px;
-  height: 10px;
-  border-radius: 999px;
-}
-
-.shiftToLegend__dot--preferred{
-  background: rgba(251,191,36,.80);
-  border: 1px solid rgba(200,150,0,.50);
-}
-
-.shiftToLegend__dot--fixed{
-  background: rgba(239,68,68,.70);
-  border: 1px solid rgba(185,28,28,.40);
-}
-
 /* Cell background colors for time-off requests */
 .shiftCell--toPreferred{
   background: rgba(251,191,36,.10) !important;
@@ -1783,11 +1750,11 @@ button[disabled]{
 
 /* Small dot indicator in shift cells */
 .shiftCell__toDot{
-  display: block;
-  width: 8px;
-  height: 8px;
+  display: inline-block;
+  width: 6px;
+  height: 6px;
   border-radius: 999px;
-  margin: 0 auto 4px;
+  flex-shrink: 0;
 }
 
 .shiftCell__toDot--preferred{
@@ -1800,21 +1767,22 @@ button[disabled]{
   border: 1px solid rgba(185,28,28,.40);
 }
 
-/* Text label under time-off dot in shift cells */
-.shiftCell__toLabel{
-  display: block;
+/* Inline tag (dot + text) for time-off in shift cells */
+.shiftCell__toTag{
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
   font-size: 9px;
-  line-height: 1;
-  text-align: center;
   font-weight: 700;
+  line-height: 1;
   margin-bottom: 2px;
 }
 
-.shiftCell__toLabel--preferred{
+.shiftCell__toTag--preferred{
   color: rgba(180,130,0,.90);
 }
 
-.shiftCell__toLabel--fixed{
+.shiftCell__toTag--fixed{
   color: rgba(185,28,28,.85);
 }
 

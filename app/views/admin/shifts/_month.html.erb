@@ -20,17 +20,6 @@
   </div>
 </div>
 
-<div class="shiftToLegend">
-  <span class="shiftToLegend__item">
-    <span class="shiftToLegend__dot shiftToLegend__dot--preferred"></span>
-    希望休
-  </span>
-  <span class="shiftToLegend__item">
-    <span class="shiftToLegend__dot shiftToLegend__dot--fixed"></span>
-    固定休
-  </span>
-</div>
-
 <div class="shiftMonthScroll">
   <table class="table shiftMonthTable">
     <thead>
@@ -62,8 +51,10 @@
 
             <td class="shiftCell <%= 'is-weekend' if d.saturday? || d.sunday? %> <%= 'is-today' if d == Date.current %> <%= "shiftCell--toPreferred" if to_req&.preferred? %> <%= "shiftCell--toFixed" if to_req&.fixed? %>">
               <% if to_req %>
-                <span class="shiftCell__toDot shiftCell__toDot--<%= to_req.request_type %>"></span>
-                <span class="shiftCell__toLabel shiftCell__toLabel--<%= to_req.request_type %>"><%= to_req.preferred? ? "希望" : "固定休" %></span>
+                <span class="shiftCell__toTag shiftCell__toTag--<%= to_req.request_type %>">
+                  <span class="shiftCell__toDot shiftCell__toDot--<%= to_req.request_type %>"></span>
+                  <%= to_req.preferred? ? "希望" : "固定休" %>
+                </span>
               <% end %>
               <select
                 class="select select--xs shiftCell__select"
