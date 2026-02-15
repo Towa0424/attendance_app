@@ -47,8 +47,15 @@
 
           <% @days.each do |d| %>
             <% cur = @shifts_map[[u.id, d]] %>
+            <% to_req = @time_off_map[[u.id, d]] %>
 
-            <td class="shiftCell <%= 'is-weekend' if d.saturday? || d.sunday? %> <%= 'is-today' if d == Date.current %>">
+            <td class="shiftCell <%= 'is-weekend' if d.saturday? || d.sunday? %> <%= 'is-today' if d == Date.current %> <%= "shiftCell--toPreferred" if to_req&.preferred? %> <%= "shiftCell--toFixed" if to_req&.fixed? %>">
+              <% if to_req %>
+                <span class="shiftCell__toTag shiftCell__toTag--<%= to_req.request_type %>">
+                  <span class="shiftCell__toDot shiftCell__toDot--<%= to_req.request_type %>"></span>
+                  <%= to_req.preferred? ? "希望" : "固定休" %>
+                </span>
+              <% end %>
               <select
                 class="select select--xs shiftCell__select"
                 data-shift-cell-select="1"
