@@ -1800,6 +1800,24 @@ button[disabled]{
   border: 1px solid rgba(185,28,28,.40);
 }
 
+/* Text label under time-off dot in shift cells */
+.shiftCell__toLabel{
+  display: block;
+  font-size: 9px;
+  line-height: 1;
+  text-align: center;
+  font-weight: 700;
+  margin-bottom: 2px;
+}
+
+.shiftCell__toLabel--preferred{
+  color: rgba(180,130,0,.90);
+}
+
+.shiftCell__toLabel--fixed{
+  color: rgba(185,28,28,.85);
+}
+
 /* Lock bar in shift management */
 .shiftLockBar{
   display:flex;

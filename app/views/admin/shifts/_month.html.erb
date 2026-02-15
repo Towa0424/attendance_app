@@ -62,7 +62,8 @@
 
             <td class="shiftCell <%= 'is-weekend' if d.saturday? || d.sunday? %> <%= 'is-today' if d == Date.current %> <%= "shiftCell--toPreferred" if to_req&.preferred? %> <%= "shiftCell--toFixed" if to_req&.fixed? %>">
               <% if to_req %>
-                <span class="shiftCell__toDot shiftCell__toDot--<%= to_req.request_type %>" title="<%= StaffTimeOffRequest.request_type_label(to_req.request_type) %>"></span>
+                <span class="shiftCell__toDot shiftCell__toDot--<%= to_req.request_type %>"></span>
+                <span class="shiftCell__toLabel shiftCell__toLabel--<%= to_req.request_type %>"><%= to_req.preferred? ? "希望" : "固定休" %></span>
               <% end %>
               <select
                 class="select select--xs shiftCell__select"
