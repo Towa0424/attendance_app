@@ -1532,8 +1532,6 @@ button[disabled]{
   overflow: hidden;
   text-overflow: ellipsis;
 }
-<<<<<<< HEAD
-=======
 
 /* =========================================================
    Time Off Requests - Staff Calendar
@@ -1830,4 +1828,3 @@ button[disabled]{
 .shiftLockBtn--locked:hover{
   background: rgba(239,68,68,.18);
 }
->>>>>>> claude/add-staff-time-off-fNYky
