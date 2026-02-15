@@ -46,11 +46,11 @@
 
         if (data.locked) {
           btn.classList.add("shiftLockBtn--locked");
-          if (iconEl) iconEl.innerHTML = "&#128274;";
+          if (iconEl) iconEl.textContent = "🔒";
           if (textEl) textEl.textContent = "ロック中";
         } else {
           btn.classList.remove("shiftLockBtn--locked");
-          if (iconEl) iconEl.innerHTML = "&#128275;";
+          if (iconEl) iconEl.textContent = "🔓";
           if (textEl) textEl.textContent = "未ロック";
         }
       } catch (_e) {

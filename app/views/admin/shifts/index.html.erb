@@ -59,7 +59,7 @@
             data-group-id="<%= @group_id %>"
             data-month="<%= @month&.strftime('%Y-%m') %>"
             data-locked="<%= @time_off_locked %>">
-            <span class="shiftLockBtn__icon"><%= @time_off_locked ? "&#128274;" : "&#128275;" %></span>
+            <span class="shiftLockBtn__icon"><%= @time_off_locked ? "🔒" : "🔓" %></span>
             <span class="shiftLockBtn__text"><%= @time_off_locked ? "ロック中" : "未ロック" %></span>
           </button>
         </div>

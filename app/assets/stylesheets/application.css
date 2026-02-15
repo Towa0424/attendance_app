@@ -1739,6 +1739,39 @@ button[disabled]{
    Time Off - Shift Management Integration (Admin Month View)
    ========================================================= */
 
+/* Time-off legend in shift management */
+.shiftToLegend{
+  display:flex;
+  align-items:center;
+  gap: 16px;
+  padding: 8px 14px;
+  font-size: 12px;
+  color: rgba(17,24,39,.70);
+}
+
+.shiftToLegend__item{
+  display:inline-flex;
+  align-items:center;
+  gap: 6px;
+}
+
+.shiftToLegend__dot{
+  display:inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+}
+
+.shiftToLegend__dot--preferred{
+  background: rgba(251,191,36,.80);
+  border: 1px solid rgba(200,150,0,.50);
+}
+
+.shiftToLegend__dot--fixed{
+  background: rgba(239,68,68,.70);
+  border: 1px solid rgba(185,28,28,.40);
+}
+
 /* Cell background colors for time-off requests */
 .shiftCell--toPreferred{
   background: rgba(251,191,36,.10) !important;
