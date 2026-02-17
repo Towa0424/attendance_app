@@ -187,15 +187,19 @@ module Admin
       shifts = Shift.where(group_id: @group.id, work_date: @days).select(:id, :user_id, :work_date, :shift_pattern_id)
       @shifts_map = shifts.index_by { |s| [s.user_id, s.work_date] }
 
+      # 希望休データ
+      user_ids = @users.map(&:id)
+      time_off_requests = StaffTimeOffRequest.where(user_id: user_ids, target_date: @days)
+      @time_off_map = time_off_requests.index_by { |r| [r.user_id, r.target_date] }
+
+      # ロック状態
       @time_off_locked = TimeOffLock.locked?(@group.id, @month)
-      @time_off_requests = StaffTimeOffRequest.where(user_id: @users.pluck(:id)).for_month(@month)
-      @time_off_map = @time_off_requests.index_by { |r| [r.user_id, r.target_date] }
     rescue ArgumentError
       @month = Date.current.beginning_of_month
       @days = (@month.beginning_of_month..@month.end_of_month).to_a
       @shifts_map = {}
-      @time_off_locked = false
       @time_off_map = {}
+      @time_off_locked = false
     end
 
     def build_day_view
