@@ -39,7 +39,6 @@ Attendance App
   - [![Image from Gyazo](https://i.gyazo.com/3567d5af0af4b6022fe9400041309867.gif)](https://gyazo.com/3567d5af0af4b6022fe9400041309867)
 
   ## 実装予定の機能
-- シフト希望提出機能
 - 各種集計ダッシュボード機能
 
 ## データベース設計
